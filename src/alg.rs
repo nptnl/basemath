@@ -1,4 +1,4 @@
-use crate::math::comp::Comp;
+use crate::comp::Comp;
 
 static ZERO: Comp = Comp { r: 0.0, i: 0.0 };
 static ONE: Comp = Comp { r: 1.0, i: 0.0 };

@@ -1,5 +1,5 @@
 pub mod comp;
-pub mod prim;
+pub mod alg;
 pub mod trig;
 
 use trig::*;
