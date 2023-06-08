@@ -2,6 +2,6 @@ pub mod comp;
 pub mod alg;
 pub mod trig;
 
-use trig::*;
-use alg::*;
-use comp::*;
+pub use comp::*;
+pub use alg::*;
+pub use trig::*;
