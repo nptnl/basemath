@@ -116,23 +116,57 @@ impl ops::Div<f64> for Comp {
     }
 }
 
-impl ops::AddAssign<Comp> for Comp {
-    fn add_assign(&mut self, other: Comp) {
+impl ops::Add<Comp> for f64 {
+    type Output = Comp;
+    fn add(self, other: Comp) {
+        Comp {
+            r: self + other.r,
+            i: other.i,
+        }
+    }
+}
+impl ops::Sub<Comp> for f64 {
+    type Output = Comp;
+    fn sub(self, other: Comp) {
+        Comp {
+            r: self - other.r,
+            i: -other.i,
+        }
+    }
+}
+impl ops::Mul<Comp> for f64 {
+    type Output = Comp;
+    fn mul(self, other: Comp) {
+        Comp {
+            r: self * other.r,
+            i: self * other.i,
+        }
+    }
+}
+impl ops::Div<Comp> for f64 {
+    type Output = Comp;
+    fn div(self, other: Comp) {
+        self * other.inv()
+    }
+}
+
+impl ops::AddAssign<T: ops::Add<Comp>> for Comp {
+    fn add_assign(&mut self, other: T) {
         *self = *self + other
     }
 }
-impl ops::SubAssign<Comp> for Comp {
-    fn sub_assign(&mut self, other: Comp) {
+impl ops::SubAssign<T: ops::Sub<Comp>> for Comp {
+    fn sub_assign(&mut self, other: T) {
         *self = *self - other
     }
 }
-impl ops::MulAssign<Comp> for Comp {
-    fn mul_assign(&mut self, other: Comp) {
+impl ops::MulAssign<T: ops::Mul<Comp>> for Comp {
+    fn mul_assign(&mut self, other: T) {
         *self = *self * other
     }
 }
-impl ops::DivAssign<Comp> for Comp {
-    fn div_assign(&mut self, other: Comp) {
+impl ops::DivAssign<T: ops::Div<Comp>> for Comp {
+    fn div_assign(&mut self, other: T) {
         *self = *self / other
     }
 }
