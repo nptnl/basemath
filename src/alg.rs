@@ -68,7 +68,7 @@ pub fn exp(x: Comp) -> Comp {
     let (i, rflip): (f64, bool) = exp_imag_rf(x.i);
     let mut out: Comp = raw_exp(Comp { r, i });
     out *= Comp::nre(extra);
-    if rneg { out = out.inv(); }
+    if rneg { out = out.inv(); out.i = -out.i; }
     if rflip { out.r = -out.r; }
     out
 }
