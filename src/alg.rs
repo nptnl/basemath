@@ -1,3 +1,5 @@
+//! The fundamental functions used throughout the crate.
+
 use crate::comp::Comp;
 
 static ZERO: Comp = Comp { r: 0.0, i: 0.0 };

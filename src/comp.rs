@@ -1,24 +1,31 @@
+//! Complex numbers and trait implementations.
+
 use std::{ops, cmp};
 use crate::alg::{exp, ln};
 
+/// Basic complex number struct, constructed from two `f64`s, one real, one imaginary.
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Comp {
+    /// The real part of the number.
     pub r: f64,
+    /// The imaginary part of the number.
     pub i: f64,
 }
 impl Comp {
+    /// New complex number instance from two `f64`s, real and imaginary.
     pub fn new(r: f64, i: f64) -> Self {
         Self { r, i }
     }
+    /// Shortcut for no imaginary part.
     pub fn nre(r: f64) -> Self {
         Self { r, i: 0.0 }
     }
+    /// Shortcut for no real part.
     pub fn nim(i: f64) -> Self {
         Self { r: 0.0, i }
     }
-    pub fn square(self) -> Self {
-        self * self
-    }
+    /// Uses the complex conjugate to compute the inverse of a `Comp`.
     pub fn inv(self) -> Self {
         let divisor: f64 = 1.0 / (self.r*self.r + self.i*self.i);
         Self {
@@ -26,12 +33,15 @@ impl Comp {
             i: -self.i * divisor
         }
     }
+    /// Cheap square of the magnitude, or absolute value of the number.
     pub fn mag_square(self) -> f64 {
         self.r * self.r + self.i * self.i
     }
+    /// More expensive magnitude function, because it uses a `sqrt()` function, but usually nothing to worry about.
     pub fn mag(self) -> f64 {
         real_sqrt(self.r * self.r + self.i * self.i)
     }
+    /// Uses exp() and ln() to compute exponentiation for any `Comp`s.
     pub fn pow(self, other: Self) -> Self {
         exp( ln(self) * other )
     }
