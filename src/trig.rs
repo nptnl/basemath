@@ -1,7 +1,7 @@
 //! Trigonometric functions, along with hyperbolics and inverses.
 
-use crate::alg::{exp, ixp, ln};
-use crate::comp::{comp_sqrt, Comp};
+use crate::alg::{exp, ixp, ln, sqrt};
+use crate::comp::Comp;
 
 static ONE: Comp = Comp { r: 1.0, i: 0.0 };
 static I: Comp = Comp { r: 0.0, i: 1.0 };
@@ -40,11 +40,11 @@ pub fn csc(x: Comp) -> Comp {
 
 /// inverse sine, arc-sine
 pub fn asin(x: Comp) -> Comp {
-    Comp::nre(0.5*PI) + Comp::nim(-1.0) * ln(x - comp_sqrt(x*x - ONE))
+    Comp::nre(0.5*PI) + Comp::nim(-1.0) * ln(x - sqrt(x*x - ONE))
 }
 /// inverse cosine, arc-cosine
 pub fn acos(x: Comp) -> Comp {
-    Comp::nim(-1.0) * ln(x + comp_sqrt(x*x - ONE))
+    Comp::nim(-1.0) * ln(x + sqrt(x*x - ONE))
 }
 /// inverse tangent, arc-tangent
 pub fn atan(x: Comp) -> Comp {
@@ -92,11 +92,11 @@ pub fn csch(x: Comp) -> Comp {
 
 /// inverse hyperbolic sine
 pub fn asinh(x: Comp) -> Comp {
-    ln(x - comp_sqrt(x*x + ONE))
+    ln(x - sqrt(x*x + ONE))
 }
 /// inverse hyperbolic cosine
 pub fn acosh(x: Comp) -> Comp {
-    ln(x - comp_sqrt(x*x - ONE))
+    ln(x - sqrt(x*x - ONE))
 }
 /// inverse hyperbolic tangent
 pub fn atanh(x: Comp) -> Comp {

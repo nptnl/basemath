@@ -5,7 +5,6 @@
 //! Everything is subject to change, as I will continue to find more math to implement, and more ways to optimize existing functions.
 //!
 
-
 pub mod comp;
 pub mod alg;
 pub mod trig;

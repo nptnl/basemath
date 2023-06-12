@@ -1,10 +1,28 @@
-//! The fundamental functions used throughout the crate.
+//! The fundamental mathematical functions used throughout the crate.
 
 use crate::comp::Comp;
 
 static ZERO: Comp = Comp { r: 0.0, i: 0.0 };
 static ONE: Comp = Comp { r: 1.0, i: 0.0 };
 static PI: f64 = 3.1415926535;
+
+pub(crate) fn real_sqrt(x: f64) -> f64 {
+    let (mut t1, mut t2): (f64, f64) = (2.0, 1.0);
+    while (t2 - t1).abs() > 0.0001 {
+        t1 = t2;
+        t2 -= (t2*t2 - x) / (2.0*t2);
+    }
+    t2
+}
+/// Uses a slightly modified Newton's method to approximate square roots of any complex number.
+pub fn sqrt(x: Comp) -> Comp {
+    let (mut t1, mut t2): (Comp, Comp) = (Comp::new(2.0, 1.0), Comp::new(1.0, 1.0));
+    while (t2 - t1).mag_square() > 0.0001 {
+        t1 = t2;
+        t2 -= (t2*t2 - x) / (Comp::nre(2.0)*t2);
+    }
+    t2
+}
 
 fn raw_exp(x: Comp) -> Comp {
     let mut total: Comp = ZERO;
@@ -65,6 +83,7 @@ fn ln_ang_rf(unit: Comp) -> (Comp, f64) {
     ( Comp { r, i }, extra)
 }
 
+/// The exponential function, using an optimized and range-fixed Taylor polynomial algorithm.
 pub fn exp(x: Comp) -> Comp {
     let (r, rneg, extra): (f64, bool, f64) = exp_real_rf(x.r);
     let (i, rflip): (f64, bool) = exp_imag_rf(x.i);
@@ -75,6 +94,7 @@ pub fn exp(x: Comp) -> Comp {
     out
 }
 pub fn ixp(x: Comp) -> Comp { exp(Comp::nim(1.0) * x) }
+/// The natural logarithm, using an optimized and range-fixed Taylor polynomial algorithm.
 pub fn ln(x: Comp) -> Comp {
     let mag: f64 = x.mag();
     let unit: Comp = x / Comp::nre(mag);
@@ -83,6 +103,11 @@ pub fn ln(x: Comp) -> Comp {
     if neg {raw_ln(ang_fix / Comp::nre(mag_fix)) + Comp::new(ex_r, ex_i) }
     else { raw_ln(ang_fix * Comp::nre(mag_fix)) + Comp::new(-ex_r, ex_i) }
 }
+/// Logarithms of any base, in form:
+/// ```
+/// ln(3, 8) // returns (approximately) 2
+/// ln(2, 32) // returns (approximately) 5
+/// ```
 pub fn log(n: Comp, x: Comp) -> Comp {
     ln(x) / ln(n)
 }
