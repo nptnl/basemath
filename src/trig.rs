@@ -1,7 +1,7 @@
 //! Trigonometric functions, along with hyperbolics and inverses.
 
 use crate::alg::{exp, ixp, ln, sqrt};
-use crate::comp::Comp;
+use crate::ch::Comp;
 
 static ONE: Comp = Comp { r: 1.0, i: 0.0 };
 static I: Comp = Comp { r: 0.0, i: 1.0 };

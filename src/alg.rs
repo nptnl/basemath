@@ -1,6 +1,6 @@
 //! The fundamental mathematical functions used throughout the crate.
 
-use crate::comp::Comp;
+use crate::ch::Comp;
 
 static ZERO: Comp = Comp { r: 0.0, i: 0.0 };
 static ONE: Comp = Comp { r: 1.0, i: 0.0 };

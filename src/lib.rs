@@ -5,10 +5,10 @@
 //! Everything is subject to change, as I will continue to find more math to implement, and more ways to optimize existing functions.
 //!
 
-pub mod comp;
+pub mod ch;
 pub mod alg;
 pub mod trig;
 
-pub use comp::*;
+pub use ch::*;
 pub use alg::*;
 pub use trig::*;
