@@ -3,8 +3,7 @@
 use std::{ops, cmp};
 use crate::alg::{exp, ln, real_sqrt};
 
-/// Basic complex number struct, constructed from two `f64`s, one real, one imaginary.
-
+/// Basic complex number struct, constructed from two `f64`s, one real, one imaginary in form (a + bi).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Comp {
     /// The real part of the number.
@@ -25,6 +24,10 @@ impl Comp {
     pub fn nim(i: f64) -> Self {
         Self { r: 0.0, i }
     }
+    /// Simple complex conjugate, (a + bi) -> (a - bi).
+    pub fn conj(self) -> Self {
+        Self { r: self.r, i: -self.i }
+    }
     /// Uses the complex conjugate to compute the inverse of a `Comp`.
     pub fn inv(self) -> Self {
         let divisor: f64 = 1.0 / (self.r*self.r + self.i*self.i);
@@ -44,6 +47,47 @@ impl Comp {
     /// Uses exp() and ln() to compute exponentiation for any `Comp`s.
     pub fn pow(self, other: Self) -> Self {
         exp( ln(self) * other )
+    }
+}
+
+/// Struct for quaternion numbers, using four `f64`s in form (a + bi + cj + dk).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Quat {
+    pub r: f64,
+    pub i: f64,
+    pub j: f64,
+    pub k: f64,
+}
+impl Quat {
+    /// New quaternion instance from four `f64`s.
+    pub fn new(r: f64, i: f64, j: f64, k: f64) -> Self {
+        Self { r, i, j, k }
+    }
+    /// Shortcut for all imaginary parts == 0.
+    pub fn nre(r: f64) -> Self {
+        Self { r, i: 0.0, j: 0.0, k: 0.0 }
+    }
+    /// Simple quaternion conjugate, (a + bi + cj + dk) -> (a - bi  - cj - dk)
+    pub fn conj(self) -> Self {
+        Self { r: self.r, i: -self.i, j: -self.j, k: -self.k }
+    }
+    /// Uses a quaternion conjugate to compute the inverse of a quaternion.
+    pub fn inv(self) -> Self {
+        let divisor: f64 = 1.0 / (self.r*self.r + self.i*self.i + self.j*self.j + self.k*self.k);
+        Self {
+            r: self.r * divisor,
+            i: self.i * divisor,
+            j: self.j * divisor,
+            k: self.k * divisor,
+        }
+    }
+    /// Cheap square of magnitude, or absolute value of thw quaternion.
+    pub fn mag_square(self) -> f64 {
+        self.r * self.r + self.i * self.i + self.j * self.j + self.k * self.k
+    }
+    /// More expensive magnitude function, as it uses sqrt(), but usually nothing to worry about.
+    pub fn mag(self) -> f64 {
+        real_sqrt( self.r * self.r + self.i * self.i + self.j * self.j + self.k * self.k )
     }
 }
 
