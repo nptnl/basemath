@@ -2,7 +2,7 @@
 name = "basemath"
 version = "1.1.0"
 edition = "2021"
-liscense-file = "liscense.txt"
+license-file = "liscense.txt"
 description = "personal little math lib from the ground up"
 repository = "https://github.com/nptnl/basemath"
 readme = "readme.md"
