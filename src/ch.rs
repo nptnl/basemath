@@ -36,6 +36,10 @@ impl Comp {
             i: -self.i * divisor
         }
     }
+    /// easy z * z
+    pub fn square(self) -> Self {
+        self * self
+    }
     /// Cheap square of the magnitude, or absolute value of the number.
     pub fn mag_square(self) -> f64 {
         self.r * self.r + self.i * self.i
