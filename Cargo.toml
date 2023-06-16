@@ -1,6 +1,6 @@
 [package]
 name = "basemath"
-version = "1.1.0"
+version = "1.1.1"
 edition = "2021"
 license-file = "license.txt"
 description = "personal little math lib from the ground up"
