@@ -71,6 +71,10 @@ impl Quat {
     pub fn nre(r: f64) -> Self {
         Self { r, i: 0.0, j: 0.0, k: 0.0 }
     }
+    /// Shortcut for only real and i parts.
+    pub fn nco(r: f64, i: f64) -> Self {
+        Self { r, i, j: 0.0, k: 0.0 }
+    }
     /// Simple quaternion conjugate, (a + bi + cj + dk) -> (a - bi  - cj - dk)
     pub fn conj(self) -> Self {
         Self { r: self.r, i: -self.i, j: -self.j, k: -self.k }
@@ -84,6 +88,10 @@ impl Quat {
             j: self.j * divisor,
             k: self.k * divisor,
         }
+    }
+    /// easy h * h
+    pub fn square(self) -> Self {
+        self * self
     }
     /// Cheap square of magnitude, or absolute value of thw quaternion.
     pub fn mag_square(self) -> f64 {

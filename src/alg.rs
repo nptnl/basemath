@@ -29,7 +29,7 @@ fn raw_exp(x: Comp) -> Comp {
     let mut running: Comp = ONE;
     for time in 1..8 {
         total += running;
-        running *= x / Comp::nre(time as f64);
+        running *= x / time as f64;
     }
     total
 }
@@ -38,7 +38,7 @@ fn raw_ln(x: Comp) -> Comp {
     let mut total: Comp = ZERO;
     let mut running: Comp = centered;
     for time in 1..16 {
-        total += running / Comp::nre(time as f64);
+        total += running / time as f64;
         running *= -centered;
     }
     total
@@ -93,15 +93,16 @@ pub fn exp(x: Comp) -> Comp {
     if rflip { out.r = -out.r; }
     out
 }
+/// exp(ix)
 pub fn ixp(x: Comp) -> Comp { exp(Comp::nim(1.0) * x) }
 /// The natural logarithm, using an optimized and range-fixed Taylor polynomial algorithm.
 pub fn ln(x: Comp) -> Comp {
     let mag: f64 = x.mag();
-    let unit: Comp = x / Comp::nre(mag);
+    let unit: Comp = x / mag;
     let (mag_fix, neg, ex_r) = ln_mag_rf(mag);
     let (ang_fix, ex_i) = ln_ang_rf(unit);
-    if neg {raw_ln(ang_fix / Comp::nre(mag_fix)) + Comp::new(ex_r, ex_i) }
-    else { raw_ln(ang_fix * Comp::nre(mag_fix)) + Comp::new(-ex_r, ex_i) }
+    if neg {raw_ln(ang_fix / mag_fix) + Comp::new(ex_r, ex_i) }
+    else { raw_ln(ang_fix * mag_fix) + Comp::new(-ex_r, ex_i) }
 }
 /// Logarithms of any base, in form:
 /// ```

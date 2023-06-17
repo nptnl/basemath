@@ -15,7 +15,7 @@ pub fn sin(x: Comp) -> Comp {
 /// cosine
 pub fn cos(x: Comp) -> Comp {
     let series: Comp = ixp(x);
-    Comp::nre(0.5) * (series + series.inv())
+    0.5 * (series + series.inv())
 }
 /// tangent
 pub fn tan(x: Comp) -> Comp {
@@ -25,12 +25,12 @@ pub fn tan(x: Comp) -> Comp {
 /// cotangent
 pub fn cot(x: Comp) -> Comp {
     let series: Comp = ixp(x);
-    Comp::nim(1.0) * (series + series.inv()) / (series - series.inv())
+    I * (series + series.inv()) / (series - series.inv())
 }
 /// secant
 pub fn sec(x: Comp) -> Comp {
     let series: Comp = ixp(x);
-    Comp::nre(2.0)  / (series + series.inv())
+    2.0  / (series + series.inv())
 }
 /// cosecant
 pub fn csc(x: Comp) -> Comp {
@@ -48,7 +48,7 @@ pub fn acos(x: Comp) -> Comp {
 }
 /// inverse tangent, arc-tangent
 pub fn atan(x: Comp) -> Comp {
-    Comp::nre(0.5*PI) + Comp::nim(-0.5) * ln((I*x + ONE) / (I*x - ONE))
+    0.5*PI + Comp::nim(-0.5) * ln((I*x + ONE) / (I*x - ONE))
 }
 /// inverse cotangent, arc-cotangent
 pub fn acot(x: Comp) -> Comp {
@@ -62,12 +62,12 @@ pub fn acsc(x: Comp) -> Comp { asin(x.inv()) }
 /// hyperbolic sine
 pub fn sinh(x: Comp) -> Comp {
     let series: Comp = exp(x);
-    Comp::nre(0.5) * (series - series.inv())
+    0.5 * (series - series.inv())
 }
 /// hyperbolic cosine
 pub fn cosh(x: Comp) -> Comp {
     let series: Comp = exp(x);
-    Comp::nre(0.5) * (series + series.inv())
+    0.5 * (series + series.inv())
 }
 /// hyperbolic tangent
 pub fn tanh(x: Comp) -> Comp {
@@ -82,29 +82,29 @@ pub fn coth(x: Comp) -> Comp {
 /// hyperbolic secant
 pub fn sech(x: Comp) -> Comp {
     let series: Comp = exp(x);
-    Comp::nre(2.0) / (series + series.inv())
+    2.0 / (series + series.inv())
 }
 /// hyperbolic cosecant
 pub fn csch(x: Comp) -> Comp {
     let series: Comp = exp(x);
-    Comp::nre(2.0) / (series - series.inv())
+    2.0 / (series - series.inv())
 }
 
 /// inverse hyperbolic sine
 pub fn asinh(x: Comp) -> Comp {
-    ln(x - sqrt(x*x + ONE))
+    ln(x - sqrt(x*x + 1.0))
 }
 /// inverse hyperbolic cosine
 pub fn acosh(x: Comp) -> Comp {
-    ln(x - sqrt(x*x - ONE))
+    ln(x - sqrt(x*x - 1.0))
 }
 /// inverse hyperbolic tangent
 pub fn atanh(x: Comp) -> Comp {
-    Comp::nim(0.5*PI) + Comp::nre(0.5) * ln((x + ONE) / (x - ONE))
+    Comp::nim(0.5*PI) + 0.5 * ln((x + 1.0) / (x - 1.0))
 }
 /// inverse hyperbolic cotangent
 pub fn acoth(x: Comp) -> Comp {
-    Comp::nre(0.5) * ln((x + ONE) / (x - ONE))
+    0.5 * ln((x + 1.0) / (x - 1.0))
 }
 /// inverse hyperbolic secant
 pub fn asech(x: Comp) -> Comp {
