@@ -168,71 +168,6 @@ impl std::fmt::Display for Comp {
     }
 }
 
-impl ops::Add<Comp> for Comp {
-    type Output = Self;
-    fn add(self, other: Self) -> Self {
-        Self { r: self.r + other.r, i: self.i + other.i }
-    }
-}
-impl ops::Sub<Comp> for Comp {
-    type Output = Self;
-    fn sub(self, other: Self) -> Self {
-        Self { r: self.r - other.r, i: self.i - other.i }
-    }
-}
-impl ops::Mul<Comp> for Comp {
-    type Output = Self;
-    fn mul(self, other: Self) -> Self {
-        Self {
-            r: self.r * other.r - self.i * other.i,
-            i: self.i * other.r + self.r * other.i
-        }
-    }
-}
-impl ops::Div<Comp> for Comp {
-    type Output = Self;
-    fn div(self, other: Self) -> Self {
-        self * other.inv()
-    }
-}
-
-impl ops::Add<f64> for Comp {
-    type Output = Self;
-    fn add(self, other: f64) -> Self {
-        Self {
-            r: self.r + other,
-            i: self.i,
-        }
-    }
-}
-impl ops::Sub<f64> for Comp {
-    type Output = Self;
-    fn sub(self, other: f64) -> Self {
-        Self {
-            r: self.r - other,
-            i: self.i,
-        }
-    }
-}
-impl ops::Mul<f64> for Comp {
-    type Output = Self;
-    fn mul(self, other: f64) -> Self {
-        Self {
-            r: self.r * other,
-            i: self.i * other,
-        }
-    }
-}
-impl ops::Div<f64> for Comp {
-    type Output = Self;
-    fn div(self, other: f64) -> Self {
-        Self {
-            r: self.r / other,
-            i: self.i / other,
-        }
-    }
-}
-
 impl ops::Add<Comp> for f64 {
     type Output = Comp;
     fn add(self, other: Comp) -> Comp {
@@ -263,162 +198,6 @@ impl ops::Mul<Comp> for f64 {
 impl ops::Div<Comp> for f64 {
     type Output = Comp;
     fn div(self, other: Comp) -> Comp {
-        self * other.inv()
-    }
-}
-impl ops::Add<Quat> for Quat {
-    type Output = Quat;
-    fn add(self, other: Quat) -> Quat {
-        Quat {
-            r: self.r + other.r,
-            i: self.i + other.i,
-            j: self.j + other.j,
-            k: self.k + other.k,
-        }
-    }
-}
-impl ops::Sub<Quat> for Quat {
-    type Output = Quat;
-    fn sub(self, other: Quat) -> Quat {
-        Quat {
-            r: self.r - other.r,
-            i: self.i - other.i,
-            j: self.j - other.j,
-            k: self.k - other.k,
-        }
-    }
-}
-impl ops::Mul<Quat> for Quat {
-    type Output = Quat;
-    fn mul(self, other: Quat) -> Quat {
-        Quat {
-            r: self.r * other.r - self.i * other.i - self.j * other.j - self.k * other.k,
-            i: self.r * other.i + self.i * other.r + self.j * other.k - self.k * other.j,
-            j: self.r * other.j + self.j * other.r + self.k * other.i - self.i * other.k,
-            k: self.r * other.k + self.k * other.r + self.i * other.j - self.j * other.i,
-        }
-    }
-}
-impl ops::Div<Quat> for Quat {
-    type Output = Quat;
-    fn div(self, other: Quat) -> Quat {
-        self * other.inv()
-    }
-}
-impl ops::Add<Comp> for Quat {
-    type Output = Quat;
-    fn add(self, other: Comp) -> Quat {
-        Quat {
-            r: self.r + other.r,
-            i: self.i + other.i,
-            j: self.j,
-            k: self.k,
-        }
-    }
-}
-impl ops::Sub<Comp> for Quat {
-    type Output = Quat;
-    fn sub(self, other: Comp) -> Quat {
-        Quat {
-            r: self.r - other.r,
-            i: self.i - other.i,
-            j: self.j,
-            k: self.k,
-        }
-    }
-}
-impl ops::Mul<Comp> for Quat {
-    type Output = Quat;
-    fn mul(self, other: Comp) -> Quat {
-        Quat {
-            r: self.r * other.r - self.i * other.i,
-            i: self.r * other.i + self.i * other.r,
-            j: self.j * other.r + self.k * other.i,
-            k: self.k * other.r - self.j * other.i,
-        }
-    }
-}
-impl ops::Div<Comp> for Quat {
-    type Output = Quat;
-    fn div(self, other: Comp) -> Quat {
-        self * other.inv()
-    }
-}
-impl ops::Add<f64> for Quat {
-    type Output = Quat;
-    fn add(self, other: f64) -> Quat {
-        Quat {
-            r: self.r + other,
-            i: self.i,
-            j: self.j,
-            k: self.k,
-        }
-    }
-}
-impl ops::Sub<f64> for Quat {
-    type Output = Quat;
-    fn sub(self, other: f64) -> Quat {
-        Quat {
-            r: self.r - other,
-            i: self.i,
-            j: self.j,
-            k: self.k,
-        }
-    }
-}
-impl ops::Mul<f64> for Quat {
-    type Output = Quat;
-    fn mul(self, other: f64) -> Quat {
-        Quat {
-            r: self.r * other,
-            i: self.r * other,
-            j: self.j * other,
-            k: self.k * other,
-        }
-    }
-}
-impl ops::Div<f64> for Quat {
-    type Output = Quat;
-    fn div(self, other: f64) -> Quat {
-        self * (1.0 / other)
-    }
-}
-impl ops::Add<Quat> for Comp {
-    type Output = Quat;
-    fn add(self, other: Quat) -> Quat {
-        Quat {
-            r: self.r + other.r,
-            i: self.i + other.i,
-            j: other.j,
-            k: other.k,
-        }
-    }
-}
-impl ops::Sub<Quat> for Comp {
-    type Output = Quat;
-    fn sub(self, other: Quat) -> Quat {
-        Quat {
-            r: self.r - other.r,
-            i: self.i - other.i,
-            j: -other.j,
-            k: -other.k,
-        }
-    }
-}
-impl ops::Mul<Quat> for Comp {
-    type Output = Quat;
-    fn mul(self, other: Quat) -> Quat {
-        Quat {
-            r: self.r * other.r - self.i * other.i,
-            i: self.r * other.i + self.i * other.r,
-            j: self.r * other.j - self.i * other.k,
-            k: self.r * other.k + self.i * other.j,
-        }
-    }
-}
-impl ops::Div<Quat> for Comp {
-    type Output = Quat;
-    fn div(self, other: Quat) -> Quat {
         self * other.inv()
     }
 }
@@ -462,27 +241,227 @@ impl ops::Div<Quat> for f64 {
     }
 }
 
+impl ops::Add<f64> for Comp {
+    type Output = Self;
+    fn add(self, other: f64) -> Self {
+        Self {
+            r: self.r + other,
+            i: self.i,
+        }
+    }
+}
+impl ops::Sub<f64> for Comp {
+    type Output = Self;
+    fn sub(self, other: f64) -> Self {
+        Self {
+            r: self.r - other,
+            i: self.i,
+        }
+    }
+}
+impl ops::Mul<f64> for Comp {
+    type Output = Self;
+    fn mul(self, other: f64) -> Self {
+        Self {
+            r: self.r * other,
+            i: self.i * other,
+        }
+    }
+}
+impl ops::Div<f64> for Comp {
+    type Output = Self;
+    fn div(self, other: f64) -> Self {
+        Self {
+            r: self.r / other,
+            i: self.i / other,
+        }
+    }
+}
+impl ops::Add<Comp> for Comp {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self { r: self.r + other.r, i: self.i + other.i }
+    }
+}
+impl ops::Sub<Comp> for Comp {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self { r: self.r - other.r, i: self.i - other.i }
+    }
+}
+impl ops::Mul<Comp> for Comp {
+    type Output = Self;
+    fn mul(self, other: Self) -> Self {
+        Self {
+            r: self.r * other.r - self.i * other.i,
+            i: self.i * other.r + self.r * other.i
+        }
+    }
+}
+impl ops::Div<Comp> for Comp {
+    type Output = Self;
+    fn div(self, other: Self) -> Self {
+        self * other.inv()
+    }
+}
+impl ops::Add<Quat> for Comp {
+    type Output = Quat;
+    fn add(self, other: Quat) -> Quat {
+        Quat {
+            r: self.r + other.r,
+            i: self.i + other.i,
+            j: other.j,
+            k: other.k,
+        }
+    }
+}
+impl ops::Sub<Quat> for Comp {
+    type Output = Quat;
+    fn sub(self, other: Quat) -> Quat {
+        Quat {
+            r: self.r - other.r,
+            i: self.i - other.i,
+            j: -other.j,
+            k: -other.k,
+        }
+    }
+}
+impl ops::Mul<Quat> for Comp {
+    type Output = Quat;
+    fn mul(self, other: Quat) -> Quat {
+        Quat {
+            r: self.r * other.r - self.i * other.i,
+            i: self.r * other.i + self.i * other.r,
+            j: self.r * other.j - self.i * other.k,
+            k: self.r * other.k + self.i * other.j,
+        }
+    }
+}
+impl ops::Div<Quat> for Comp {
+    type Output = Quat;
+    fn div(self, other: Quat) -> Quat {
+        self * other.inv()
+    }
+}
 
-impl ops::AddAssign<Comp> for Comp {
-    fn add_assign(&mut self, other: Comp) {
-        *self = *self + other
+impl ops::Add<f64> for Quat {
+    type Output = Quat;
+    fn add(self, other: f64) -> Quat {
+        Quat {
+            r: self.r + other,
+            i: self.i,
+            j: self.j,
+            k: self.k,
+        }
     }
 }
-impl ops::SubAssign<Comp> for Comp {
-    fn sub_assign(&mut self, other: Comp) {
-        *self = *self - other
+impl ops::Sub<f64> for Quat {
+    type Output = Quat;
+    fn sub(self, other: f64) -> Quat {
+        Quat {
+            r: self.r - other,
+            i: self.i,
+            j: self.j,
+            k: self.k,
+        }
     }
 }
-impl ops::MulAssign<Comp> for Comp {
-    fn mul_assign(&mut self, other: Comp) {
-        *self = *self * other
+impl ops::Mul<f64> for Quat {
+    type Output = Quat;
+    fn mul(self, other: f64) -> Quat {
+        Quat {
+            r: self.r * other,
+            i: self.r * other,
+            j: self.j * other,
+            k: self.k * other,
+        }
     }
 }
-impl ops::DivAssign<Comp> for Comp {
-    fn div_assign(&mut self, other: Comp) {
-        *self = *self / other
+impl ops::Div<f64> for Quat {
+    type Output = Quat;
+    fn div(self, other: f64) -> Quat {
+        self * (1.0 / other)
     }
 }
+impl ops::Add<Comp> for Quat {
+    type Output = Quat;
+    fn add(self, other: Comp) -> Quat {
+        Quat {
+            r: self.r + other.r,
+            i: self.i + other.i,
+            j: self.j,
+            k: self.k,
+        }
+    }
+}
+impl ops::Sub<Comp> for Quat {
+    type Output = Quat;
+    fn sub(self, other: Comp) -> Quat {
+        Quat {
+            r: self.r - other.r,
+            i: self.i - other.i,
+            j: self.j,
+            k: self.k,
+        }
+    }
+}
+impl ops::Mul<Comp> for Quat {
+    type Output = Quat;
+    fn mul(self, other: Comp) -> Quat {
+        Quat {
+            r: self.r * other.r - self.i * other.i,
+            i: self.r * other.i + self.i * other.r,
+            j: self.j * other.r + self.k * other.i,
+            k: self.k * other.r - self.j * other.i,
+        }
+    }
+}
+impl ops::Div<Comp> for Quat {
+    type Output = Quat;
+    fn div(self, other: Comp) -> Quat {
+        self * other.inv()
+    }
+}
+impl ops::Add<Quat> for Quat {
+    type Output = Quat;
+    fn add(self, other: Quat) -> Quat {
+        Quat {
+            r: self.r + other.r,
+            i: self.i + other.i,
+            j: self.j + other.j,
+            k: self.k + other.k,
+        }
+    }
+}
+impl ops::Sub<Quat> for Quat {
+    type Output = Quat;
+    fn sub(self, other: Quat) -> Quat {
+        Quat {
+            r: self.r - other.r,
+            i: self.i - other.i,
+            j: self.j - other.j,
+            k: self.k - other.k,
+        }
+    }
+}
+impl ops::Mul<Quat> for Quat {
+    type Output = Quat;
+    fn mul(self, other: Quat) -> Quat {
+        Quat {
+            r: self.r * other.r - self.i * other.i - self.j * other.j - self.k * other.k,
+            i: self.r * other.i + self.i * other.r + self.j * other.k - self.k * other.j,
+            j: self.r * other.j + self.j * other.r + self.k * other.i - self.i * other.k,
+            k: self.r * other.k + self.k * other.r + self.i * other.j - self.j * other.i,
+        }
+    }
+}
+impl ops::Div<Quat> for Quat {
+    type Output = Quat;
+    fn div(self, other: Quat) -> Quat {
+        self * other.inv()
+    }
+}
+
 impl ops::AddAssign<f64> for Comp {
     fn add_assign(&mut self, other: f64) {
         *self = *self + other
@@ -503,23 +482,44 @@ impl ops::DivAssign<f64> for Comp {
         *self = *self / other
     }
 }
-impl ops::AddAssign<Quat> for Quat {
-    fn add_assign(&mut self, other: Quat) {
+impl ops::AddAssign<Comp> for Comp {
+    fn add_assign(&mut self, other: Comp) {
         *self = *self + other
     }
 }
-impl ops::SubAssign<Quat> for Quat {
-    fn sub_assign(&mut self, other: Quat) {
+impl ops::SubAssign<Comp> for Comp {
+    fn sub_assign(&mut self, other: Comp) {
         *self = *self - other
     }
 }
-impl ops::MulAssign<Quat> for Quat {
-    fn mul_assign(&mut self, other: Quat) {
+impl ops::MulAssign<Comp> for Comp {
+    fn mul_assign(&mut self, other: Comp) {
         *self = *self * other
     }
 }
-impl ops::DivAssign<Quat> for Quat {
-    fn div_assign(&mut self, other: Quat) {
+impl ops::DivAssign<Comp> for Comp {
+    fn div_assign(&mut self, other: Comp) {
+        *self = *self / other
+    }
+}
+
+impl ops::AddAssign<f64> for Quat {
+    fn add_assign(&mut self, other: f64) {
+        *self = *self + other
+    }
+}
+impl ops::SubAssign<f64> for Quat {
+    fn sub_assign(&mut self, other: f64) {
+        *self = *self - other
+    }
+}
+impl ops::MulAssign<f64> for Quat {
+    fn mul_assign(&mut self, other: f64) {
+        *self = *self * other
+    }
+}
+impl ops::DivAssign<f64> for Quat {
+    fn div_assign(&mut self, other: f64) {
         *self = *self / other
     }
 }
@@ -543,23 +543,23 @@ impl ops::DivAssign<Comp> for Quat {
         *self = *self / other
     }
 }
-impl ops::AddAssign<f64> for Quat {
-    fn add_assign(&mut self, other: f64) {
+impl ops::AddAssign<Quat> for Quat {
+    fn add_assign(&mut self, other: Quat) {
         *self = *self + other
     }
 }
-impl ops::SubAssign<f64> for Quat {
-    fn sub_assign(&mut self, other: f64) {
+impl ops::SubAssign<Quat> for Quat {
+    fn sub_assign(&mut self, other: Quat) {
         *self = *self - other
     }
 }
-impl ops::MulAssign<f64> for Quat {
-    fn mul_assign(&mut self, other: f64) {
+impl ops::MulAssign<Quat> for Quat {
+    fn mul_assign(&mut self, other: Quat) {
         *self = *self * other
     }
 }
-impl ops::DivAssign<f64> for Quat {
-    fn div_assign(&mut self, other: f64) {
+impl ops::DivAssign<Quat> for Quat {
+    fn div_assign(&mut self, other: Quat) {
         *self = *self / other
     }
 }
