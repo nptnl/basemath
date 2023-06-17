@@ -129,31 +129,26 @@ impl ops::Neg for Quat {
 impl std::str::FromStr for Comp {
     type Err = ();
     fn from_str(slice: &str) -> Result<Self, Self::Err> {
-        let mut chlist = slice.chars();
-        let last = chlist.clone().count() - 1;
-        if chlist.nth(last).unwrap() == 'i' {
-            match slice.rfind('+') {
-                Some(v) => Ok( Comp {
-                    r: slice[..v].parse::<f64>().unwrap(),
-                    i: slice[v+1..last].parse::<f64>().unwrap()
-                } ),
-                None => match slice.rfind('-') {
-                    Some(v) => Ok( Comp {
-                        r: slice[..v].parse::<f64>().unwrap(),
-                        i: -slice[v+1..last].parse::<f64>().unwrap()
-                    } ),
-                    None => Ok( Comp {
-                        r: 0.0,
-                        i: slice[..last].parse::<f64>().unwrap()
-                    } ),
-                },
-            }
-        } else {
-            match slice.parse::<f64>() {
-                Ok(v) => Ok(Comp {r: v, i: 0.0 }),
-                Err(_) => Err(()),
+        let last: usize = slice.len() - 1;
+        if let Ok(r) = slice.parse::<f64>() {
+            return Ok(Comp { r, i: 0.0 })
+        }
+        if let Ok(i) = slice[..last].parse::<f64>() {
+        if &slice[last..] == "i" {
+            return Ok(Comp { r: 0.0, i })
+        }
+        }
+        if let Some(v) = slice.rfind('+') {
+            if let (Ok(r), Ok(i)) = (slice[..v].parse::<f64>(), slice[v+1..last].parse::<f64>()) {
+                return Ok(Comp { r, i });
             }
         }
+        if let Some(v) = slice.rfind('-') {
+            if let (Ok(r), Ok(i)) = (slice[..v].parse::<f64>(), slice[v..last].parse::<f64>()) {
+                return Ok(Comp { r, i });
+            }
+        }
+        Err(())
     }
 }
 impl std::fmt::Display for Comp {
@@ -164,6 +159,59 @@ impl std::fmt::Display for Comp {
             write!(f, "{}+{}i", self.r, self.i)
         } else {
             write!(f, "{}", self.r)
+        }
+    }
+}
+
+fn get_last(slice: &str, last: usize) -> (Result<f64, ()>, usize) {
+    if let Some(indx) = slice.rfind('+') {
+        match slice[indx+1..last].parse::<f64>() {
+            Err(_) => return (Err(()), last),
+            Ok(v) => return (Ok(v), indx),
+        }
+    }
+    if let Some(indx) = slice.rfind('-') {
+        match slice[indx..last].parse::<f64>() {
+            Err(_) => return (Err(()), last),
+            Ok(v) => return (Ok(v), indx),
+        }
+    }
+    (Err(()), last)
+}
+impl std::str::FromStr for Quat {
+    type Err = ();
+    fn from_str(slice: &str) -> Result<Self, Self::Err> {
+        let mut running: &str = slice;
+        let mut out: Quat = Quat { r: 0.0, i: 0.0, j: 0.0, k: 0.0 };
+        let mut last: usize = slice.len() - 1;
+        loop {
+            if let Ok(v) = running.parse::<f64>() {
+                out.r = v; return Ok(out);
+            }
+            let (potval, indx): (Result<f64, ()>, usize) = get_last(slice, last);
+            match &running[last..] {
+                "i" => {
+                    match potval {
+                        Ok(v) => { out.i = v; },
+                        _ => return Err(()),
+                    }
+                },
+                "j" => {
+                    match potval {
+                        Ok(v) => { out.j = v; },
+                        _ => return Err(()),
+                    }
+                },
+                "k" => {
+                    match potval {
+                        Ok(v) => { out.k = v; },
+                        _ => return Err(()),
+                    }
+                },
+                _ => {return Err(())},
+            }
+            running = &running[..indx];
+            last = indx - 1;
         }
     }
 }
