@@ -3,30 +3,42 @@
 use std::{ops, cmp};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
+/// Rational number struct, taking in two i32s as numerator and denominator.
 pub struct Rat {
+    /// numerator i32
     n: i32,
+    /// demoninator i32 - in practice it will always be positive
     d: i32,
 }
 impl Rat {
+    /// Creates new fraction, but does so by using the gcf algorithm, so it will be in simplest form.
     pub fn new(num: i32, den: i32) -> Rat {
         let (greatest, neg): (i32, bool) = gcf(num, den);
         if neg { Rat { n: -num.abs() / greatest, d: den.abs() / greatest } }
         else { Rat { n: num.abs() / greatest, d: den.abs() / greatest } }
     }
+    /// shortcut for demoninator = 1.
     pub fn newint(num: i32) -> Rat {
         Rat { n: num, d: 1 }
     }
+    /// reduces fractions with the GCF
     pub fn reduce(&mut self) {
         let (greatest, neg): (i32, bool) = gcf(self.n, self.d);
         *self = 
         if neg { Rat { n: -self.n.abs() / greatest, d: self.d.abs() / greatest } }
         else { Rat { n: self.n.abs() / greatest, d: self.d.abs() / greatest } }
     }
+    /// simple reciprocal
+    /// ```
+    /// let x: Rat = Rat { n: 6, d: 4 };
+    /// assert_eq!(x.recip(), Rat { n: 3, d: 2});
+    /// ```
     pub fn recip(&self) -> Self {
         Self::new(self.d, self.n)
     }
 }
 
+/// Euclid's method for finding the greatest common factor of two numbers.
 fn gcf(inp1: i32, inp2: i32) -> (i32, bool) {
     let mut neg: bool = false;
     let (mut n1, mut n2): (i32, i32) = (inp1, inp2);
