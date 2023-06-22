@@ -8,7 +8,9 @@
 pub mod ch;
 pub mod alg;
 pub mod trig;
+pub mod rat;
 
 pub use ch::*;
 pub use alg::*;
 pub use trig::*;
+pub use rat::*;
