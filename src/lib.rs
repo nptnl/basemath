@@ -9,8 +9,9 @@ pub mod ch;
 pub mod alg;
 pub mod trig;
 pub mod rat;
+pub mod poly;
+pub mod lin;
 
 pub use ch::*;
 pub use alg::*;
 pub use trig::*;
-pub use rat::*;
