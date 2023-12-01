@@ -1,4 +1,6 @@
-use std::ops::{Neg, Add, Sub, Mul, Div};
+use std::ops::{
+    Neg, Add, Sub, Mul, Div, Rem,
+    AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
 
 pub trait Identity {
@@ -7,7 +9,8 @@ pub trait Identity {
 }
 
 pub trait Arithmetic: Identity + Copy + Neg<Output = Self> + PartialEq + PartialOrd
-+ Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> {}
++ Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Rem<Output = Self>
++ AddAssign + SubAssign + MulAssign + DivAssign + RemAssign {}
 
 #[derive(Clone, Copy, Debug)]
 pub struct Comp<R: Arithmetic> {

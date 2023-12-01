@@ -1,7 +1,10 @@
 pub mod cc;
 use crate::cc::*;
 
+pub mod rat;
+use crate::rat::*;
+
 fn main() {
-    let cum: g32 = Comp::new(3, -4) * Comp::new(3, 4);
+    let cum: Rat<i32> = Rat::new(6, 8) + Rat::new(1, 12);
     println!("{}", cum);
 }
