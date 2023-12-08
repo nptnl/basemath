@@ -4,8 +4,8 @@ use std::ops::{
 use std::cmp::{PartialEq, PartialOrd};
 
 pub trait Identity {
-    fn zero() -> Self;
-    fn one() -> Self;
+    static ZERO: Self;
+    static ONE: Self;
 }
 
 pub trait Arithmetic: Identity + Copy + Neg<Output = Self> + PartialEq + PartialOrd
@@ -22,10 +22,10 @@ impl<R: Arithmetic> Comp<R> {
         Self { r, i }
     }
     pub fn nre(r: R) -> Self {
-        Self { r, i: R::zero() }
+        Self { r, i: R::ZERO }
     }
     pub fn nim(i: R) -> Self {
-        Self { r: R::zero(), i }
+        Self { r: R::ZERO, i }
     }
     pub fn mag2(self) -> R {
         self.r * self.r + self.i * self.i
@@ -45,7 +45,7 @@ impl<R: Arithmetic> Comp<R> {
 impl<R> std::fmt::Display for Comp<R>
 where R: Arithmetic + std::fmt::Display {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.i < R::zero() {
+        if self.i < R::ZERO {
             write!(f, "{}-{}i", self.r, -self.i)
         } else {
             write!(f, "{}+{}i", self.r, self.i)
@@ -54,37 +54,39 @@ where R: Arithmetic + std::fmt::Display {
 }
 
 impl<R: Arithmetic> Identity for Comp<R> {
-    fn zero() -> Self {
-        Self { r: R::zero(), i: R::zero() }
-    }
-    fn one() -> Self {
-        Self { r: R::one(), i: R::zero() }
-    }
+    static ZERO: Self = Self {
+        r: R::ZERO,
+        i: R::ZERO,
+    };
+    static ONE: Self = Self {
+        r: R::ONE,
+        i: R::ZERO,
+    };
 }
 
 impl Identity for i8 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    static ZERO: Self = 0;
+    static ONE: Self = 1;
 }
 impl Identity for i16 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    static ZERO: Self = 0;
+    static ONE: Self = 1;
 }
 impl Identity for i32 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    static ZERO: Self = 0;
+    static ONE: Self = 1;
 }
 impl Identity for i64 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    static ZERO: Self = 0;
+    static ONE: Self = 1;
 }
 impl Identity for f32 {
-    fn zero() -> Self { 0.0 }
-    fn one() -> Self { 1.0 }
+    static ZERO: Self = 0.0;
+    static ONE: Self = 1.0;
 }
 impl Identity for f64 {
-    fn zero() -> Self { 0.0 }
-    fn one() -> Self { 1.0 }
+    static ZERO: Self = 0.0;
+    static ONE: Self = 1.0;
 }
 
 impl Arithmetic for f32 {}
