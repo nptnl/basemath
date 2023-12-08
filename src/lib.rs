@@ -1,7 +1,9 @@
 pub mod cc;
 pub mod rat;
+pub mod alg;
 use crate::cc::*;
 use crate::rat::*;
+use crate::alg::*;
 
 mod test {
    fn m() {

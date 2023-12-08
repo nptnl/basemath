@@ -17,8 +17,8 @@ impl<R: Arithmetic> Rat<R> {
     pub fn new(n: R, d: R) -> Self {
         let (mut n, mut d): (R, R) = (n, d);
         let mut positive: bool = true;
-        if n < R::ZERO { positive = !positive; n = -n; }
-        if d < R::ZERO { positive = !positive; d = -d; }
+        if n < R::zero() { positive = !positive; n = -n; }
+        if d < R::zero() { positive = !positive; d = -d; }
         let factor: R = gcf(n, d);
         n /= factor;
         d /= factor;
@@ -26,16 +26,16 @@ impl<R: Arithmetic> Rat<R> {
         Self { n, d }
     }
     pub fn whole(n: R) -> Self {
-        Self { n, d: R::ONE }
+        Self { n, d: R::one() }
     }
 }
 
 fn gcf<R: Arithmetic>(inp1: R, inp2: R) -> R {
     let (mut n1, mut n2): (R, R) = (inp1, inp2);
-    if n1 < R::ZERO || n2 < R::ZERO { panic!("cannot GCF negative numbers") };
+    if n1 < R::zero() || n2 < R::zero() { panic!("cannot GCF negative numbers") };
     loop {
-        if n1 == R::ZERO { return n2 };
-        if n2 == R::ZERO { return n1 };
+        if n1 == R::zero() { return n2 };
+        if n2 == R::zero() { return n1 };
         if n1 > n2 { n1 %= n2; }
         else if n2 > n1 { n2 %= n1; }
         else { return n1 };
@@ -50,15 +50,15 @@ impl<R: Arithmetic> PartialEq for Rat<R> {
 impl<R: Arithmetic> PartialOrd for Rat<R> {
     fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
         let quantity: R = self.d * rhs.n - self.n * rhs.d;
-        quantity.partial_cmp(&R::ZERO)
+        quantity.partial_cmp(&R::zero())
     }
 }
 impl<R: Arithmetic> Identity for Rat<R> {
     fn zero() -> Self {
-        Self { n: R::ZERO, d: R::ONE }
+        Self { n: R::zero(), d: R::one() }
     }
     fn one() -> Self {
-        Self { n: R::ONE, d: R::ONE }
+        Self { n: R::one(), d: R::one() }
     }
 }
 impl<R: Arithmetic + std::fmt::Display> std::fmt::Display for Rat<R> {
