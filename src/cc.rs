@@ -42,40 +42,13 @@ impl<R: Arithmetic> Comp<R> {
     }
 }
 
-impl<R: Arithmetic> Neg for Comp<R> {
-    type Output = Self;
-    fn neg(self) -> Self {
-        Self { r: -self.r, i: -self.i }
-    }
-}
-impl<R: Arithmetic> Add for Comp<R> {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        Self { r: self.r + rhs.r, i: self.i + rhs.i }
-    }
-}
-impl<R: Arithmetic> Sub for Comp<R> {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self {
-        Self { r: self.r - rhs.r, i: self.i - rhs.i }
-    }
-}
-impl<R: Arithmetic> Mul for Comp<R> {
-    type Output = Self;
-    fn mul(self, rhs: Self) -> Self {
-        Self {
-            r: self.r * rhs.r - self.i * rhs.i,
-            i: self.i * rhs.r + self.r * rhs.i,
-        }
-    }
-}
-impl<R: Arithmetic> Div for Comp<R> {
-    type Output = Self;
-    fn div(self, rhs: Self) -> Self {
-        let divisor: R = rhs.mag2();
-        Self {
-            r: (self.r * rhs.r - self.i * rhs.i) / divisor,
-            i: (self.r * rhs.i + self.i * rhs.r) / divisor,
+impl<R> std::fmt::Display for Comp<R>
+where R: Arithmetic + std::fmt::Display {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        if self.i < R::zero() {
+            write!(f, "{}-{}i", self.r, -self.i)
+        } else {
+            write!(f, "{}+{}i", self.r, self.i)
         }
     }
 }
@@ -134,13 +107,62 @@ pub type g32 = Comp<i32>;
 #[allow(non_camel_case_types)]
 pub type g64 = Comp<i64>;
 
-impl<R> std::fmt::Display for Comp<R>
-where R: Arithmetic + std::fmt::Display {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.i < R::zero() {
-            write!(f, "{}-{}i", self.r, -self.i)
-        } else {
-            write!(f, "{}+{}i", self.r, self.i)
+
+
+impl<R: Arithmetic> Neg for Comp<R> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Self { r: -self.r, i: -self.i }
+    }
+}
+impl<R: Arithmetic> Add for Comp<R> {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self {
+        Self { r: self.r + rhs.r, i: self.i + rhs.i }
+    }
+}
+impl<R: Arithmetic> Sub for Comp<R> {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self {
+        Self { r: self.r - rhs.r, i: self.i - rhs.i }
+    }
+}
+impl<R: Arithmetic> Mul for Comp<R> {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self {
+        Self {
+            r: self.r * rhs.r - self.i * rhs.i,
+            i: self.i * rhs.r + self.r * rhs.i,
         }
+    }
+}
+impl<R: Arithmetic> Div for Comp<R> {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self {
+        let divisor: R = rhs.mag2();
+        Self {
+            r: (self.r * rhs.r - self.i * rhs.i) / divisor,
+            i: (self.r * rhs.i + self.i * rhs.r) / divisor,
+        }
+    }
+}
+impl<R: Arithmetic> AddAssign for Comp<R> {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+impl<R: Arithmetic> SubAssign for Comp<R> {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+impl<R: Arithmetic> MulAssign for Comp<R> {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+impl<R: Arithmetic> DivAssign for Comp<R> {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
     }
 }
