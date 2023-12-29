@@ -4,8 +4,8 @@ use std::ops::{
 use std::cmp::{PartialEq, PartialOrd};
 
 pub trait Identity {
-    fn zero() -> Self;
-    fn one() -> Self;
+    const ZERO: Self;
+    const ONE: Self;
 }
 
 pub trait Arithmetic: Identity + Copy + Neg<Output = Self> + PartialEq + PartialOrd
@@ -22,10 +22,10 @@ impl<R: Arithmetic> Comp<R> {
         Self { r, i }
     }
     pub fn nre(r: R) -> Self {
-        Self { r, i: R::zero() }
+        Self { r, i: R::ZERO }
     }
     pub fn nim(i: R) -> Self {
-        Self { r: R::zero(), i }
+        Self { r: R::ZERO, i }
     }
     pub fn mag2(self) -> R {
         self.r * self.r + self.i * self.i
@@ -45,7 +45,7 @@ impl<R: Arithmetic> Comp<R> {
 impl<R> std::fmt::Display for Comp<R>
 where R: Arithmetic + std::fmt::Display {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.i < R::zero() {
+        if self.i < R::ZERO {
             write!(f, "{}-{}i", self.r, -self.i)
         } else {
             write!(f, "{}+{}i", self.r, self.i)
@@ -54,37 +54,33 @@ where R: Arithmetic + std::fmt::Display {
 }
 
 impl<R: Arithmetic> Identity for Comp<R> {
-    fn zero() -> Self {
-        Self { r: R::zero(), i: R::zero() }
-    }
-    fn one() -> Self {
-        Self { r: R::one(), i: R::zero() }
-    }
+    const ZERO: Self = Self { r: R::ZERO, i: R::ZERO, };
+    const ONE: Self = Self { r: R::ONE, i: R::ZERO };
 }
 
 impl Identity for i8 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
 }
 impl Identity for i16 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
 }
 impl Identity for i32 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
 }
 impl Identity for i64 {
-    fn zero() -> Self { 0 }
-    fn one() -> Self { 1 }
+    const ZERO: Self = 0;
+    const ONE: Self = 1;
 }
 impl Identity for f32 {
-    fn zero() -> Self { 0.0 }
-    fn one() -> Self { 1.0 }
+    const ZERO: Self = 0.0;
+    const ONE: Self = 1.0;
 }
 impl Identity for f64 {
-    fn zero() -> Self { 0.0 }
-    fn one() -> Self { 1.0 }
+    const ZERO: Self = 0.0;
+    const ONE: Self = 1.0;
 }
 
 impl Arithmetic for f32 {}
@@ -146,6 +142,13 @@ impl<R: Arithmetic> Div for Comp<R> {
         }
     }
 }
+impl<R: Arithmetic> Rem for Comp<R> {
+    type Output = Self;
+    fn rem(self, rhs: Self) -> Self {
+        let factor: Self = Self::nre((self.r * rhs.r + self.i * rhs.i) / rhs.mag2());
+        self - rhs * factor
+    }
+}
 impl<R: Arithmetic> AddAssign for Comp<R> {
     fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs;
@@ -166,3 +169,21 @@ impl<R: Arithmetic> DivAssign for Comp<R> {
         *self = *self / rhs;
     }
 }
+impl<R: Arithmetic> RemAssign for Comp<R> {
+    fn rem_assign(&mut self, rhs: Self) {
+        *self = *self % rhs;
+    }
+}
+
+impl<R: Arithmetic> PartialEq for Comp<R> {
+    fn eq(&self, rhs: &Self) -> bool {
+        self.r == rhs.r && self.i == rhs.i
+    }
+}
+impl<R: Arithmetic> PartialOrd for Comp<R> {
+    fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
+        self.mag2().partial_cmp(&rhs.mag2())
+    }
+}
+
+impl<R: Arithmetic> Arithmetic for Comp<R> {}
