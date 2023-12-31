@@ -3,7 +3,7 @@ use std::ops::{
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
 
-pub trait Identity {
+pub trait Identity: Copy {
     const ZERO: Self;
     const ONE: Self;
 }

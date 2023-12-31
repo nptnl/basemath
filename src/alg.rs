@@ -18,20 +18,20 @@ impl<T: Arithmetic> Poly<T> {
     pub fn dvt(&self) -> Self {
         if self.le == 0 { return self.clone() };
         let mut result: Vec<T> = Vec::new();
-        let mut indx: T = T::ONE;
-        for term in self.co.clone().into_iter().skip(1) {
-            result.push(term * indx);
-            indx += T::ONE;
+        let mut divisor: T = T::ONE;
+        for indx in 1..self.le {
+            result.push(self.co[indx] * divisor);
+            divisor += T::ONE;
         }
         Self { co: result, le: self.le - 1 }
     }
     pub fn itg(&self, plus_c: T) -> Self {
         let mut result: Vec<T> = Vec::new();
         result.push(plus_c);
-        let mut indx: T = T::ONE;
-        for term in self.co.clone().into_iter() {
-            result.push(term / indx);
-            indx += T::ONE;
+        let mut divisor: T = T::ONE;
+        for indx in 0..self.le {
+            result.push(self.co[indx] / divisor);
+            divisor += T::ONE;
         }
         Self{ co: result, le: self.le + 1 }
     }
@@ -45,6 +45,7 @@ impl<T: Arithmetic> Poly<T> {
         total
     }
     pub fn newton(&self, seed: T, error: T) -> T {
+        if self.le == 2 { return -self.co[1] / self.co[0] };
         let (mut s1, mut s2): (T, T) = (seed, seed + T::ONE);
         let slope: Self = self.dvt();
         while s1 - s2 > error || s2 - s1 > error {
@@ -53,8 +54,35 @@ impl<T: Arithmetic> Poly<T> {
         }
         s1
     }
+    pub fn rootdiv(self, root: T) -> (Self, T) {
+        let mut running: T = T::ZERO;
+        let mut quotient: Vec<T> = Vec::new();
+        for subtract in 0..self.le {
+            running = running * root + self.co[self.le-subtract-1];
+            quotient.push(running);
+        }
+        (Self { co: vec_flip(quotient), le: self.le - 1 }, self.co[0])
+    }
+    pub fn solve(self, error: T) -> Vec<T> {
+        let mut running: Self = self;
+        let mut sols: Vec<T> = Vec::new();
+        while running.le > 1 {
+            let next_root: T = running.newton(T::ONE, error);
+            sols.push(next_root);
+            running = running.rootdiv(next_root).0;
+        }
+        sols
+    }
 }
 
+fn vec_flip<T: Copy>(original: Vec<T>) -> Vec<T> {
+    let mut result: Vec<T> = Vec::new();
+    let le: usize = original.len();
+    for indx in 0..le {
+        result[indx] = original[le-indx-1];
+    }
+    result
+}
 
 
 
