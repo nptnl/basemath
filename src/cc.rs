@@ -2,15 +2,7 @@ use std::ops::{
     Neg, Add, Sub, Mul, Div, Rem,
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
-
-pub trait Identity: Copy {
-    const ZERO: Self;
-    const ONE: Self;
-}
-
-pub trait Arithmetic: Identity + Copy + Neg<Output = Self> + PartialEq + PartialOrd
-+ Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Rem<Output = Self>
-+ AddAssign + SubAssign + MulAssign + DivAssign + RemAssign {}
+use crate::rules::*;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Comp<R: Arithmetic> {
@@ -27,14 +19,11 @@ impl<R: Arithmetic> Comp<R> {
     pub fn nim(i: R) -> Self {
         Self { r: R::ZERO, i }
     }
-    pub fn mag2(self) -> R {
-        self.r * self.r + self.i * self.i
-    }
     pub fn conj(self) -> Self {
         Self { r: self.r, i: -self.i }
     }
     pub fn inv(self) -> Self {
-        let divisor: R = self.mag2();
+        let divisor: R = self.r * self.r + self.i * self.i;
         Self {
             r: self.r / divisor,
             i: self.i / divisor
@@ -52,43 +41,21 @@ where R: Arithmetic + std::fmt::Display {
         }
     }
 }
-
 impl<R: Arithmetic> Identity for Comp<R> {
     const ZERO: Self = Self { r: R::ZERO, i: R::ZERO, };
     const ONE: Self = Self { r: R::ONE, i: R::ZERO };
+    const SEED: Self = Self { r: R::ONE, i: R::ONE };
 }
-
-impl Identity for i8 {
-    const ZERO: Self = 0;
-    const ONE: Self = 1;
+impl<R: Arithmetic> PowersOfTen for Comp<R> {
+    fn order_of(power: isize) -> Self {
+        Self { r: R::order_of(power), i: R::ZERO }
+    }
 }
-impl Identity for i16 {
-    const ZERO: Self = 0;
-    const ONE: Self = 1;
+impl<R: Arithmetic> Magnitude for Comp<R> {
+    fn mag2(self) -> Self {
+        Self::nre(self.r * self.r + self.i * self.i)
+    }
 }
-impl Identity for i32 {
-    const ZERO: Self = 0;
-    const ONE: Self = 1;
-}
-impl Identity for i64 {
-    const ZERO: Self = 0;
-    const ONE: Self = 1;
-}
-impl Identity for f32 {
-    const ZERO: Self = 0.0;
-    const ONE: Self = 1.0;
-}
-impl Identity for f64 {
-    const ZERO: Self = 0.0;
-    const ONE: Self = 1.0;
-}
-
-impl Arithmetic for f32 {}
-impl Arithmetic for f64 {}
-impl Arithmetic for i8 {}
-impl Arithmetic for i16 {}
-impl Arithmetic for i32 {}
-impl Arithmetic for i64 {}
 
 #[allow(non_camel_case_types)]
 pub type c32 = Comp<f32>;
@@ -135,7 +102,7 @@ impl<R: Arithmetic> Mul for Comp<R> {
 impl<R: Arithmetic> Div for Comp<R> {
     type Output = Self;
     fn div(self, rhs: Self) -> Self {
-        let divisor: R = rhs.mag2();
+        let divisor: R = rhs.r * rhs.r + rhs.i * rhs.i;
         Self {
             r: (self.r * rhs.r - self.i * rhs.i) / divisor,
             i: (self.r * rhs.i + self.i * rhs.r) / divisor,
@@ -145,7 +112,7 @@ impl<R: Arithmetic> Div for Comp<R> {
 impl<R: Arithmetic> Rem for Comp<R> {
     type Output = Self;
     fn rem(self, rhs: Self) -> Self {
-        let factor: Self = Self::nre((self.r * rhs.r + self.i * rhs.i) / rhs.mag2());
+        let factor: Self = Self::nre((self.r * rhs.r + self.i * rhs.i) / rhs.mag2().r);
         self - rhs * factor
     }
 }
@@ -182,7 +149,7 @@ impl<R: Arithmetic> PartialEq for Comp<R> {
 }
 impl<R: Arithmetic> PartialOrd for Comp<R> {
     fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
-        self.mag2().partial_cmp(&rhs.mag2())
+        self.mag2().r.partial_cmp(&rhs.mag2().r)
     }
 }
 

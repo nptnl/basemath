@@ -3,12 +3,12 @@ use std::ops::{
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
 
-use crate::cc::{Identity, Arithmetic};
+use crate::rules::*;
 
 #[derive(Clone, Debug)]
 pub struct Poly<T: Arithmetic> {
-    co: Vec<T>,
-    le: usize,
+    pub co: Vec<T>,
+    pub le: usize,
 }
 impl<T: Arithmetic> Poly<T> {
     pub fn new(co: Vec<T>) -> Self {
@@ -44,13 +44,20 @@ impl<T: Arithmetic> Poly<T> {
         }
         total
     }
-    pub fn newton(&self, seed: T, error: T) -> T {
-        if self.le == 2 { return -self.co[1] / self.co[0] };
-        let (mut s1, mut s2): (T, T) = (seed, seed + T::ONE);
+    pub fn newton(&self, error: T) -> T {
+        if self.le == 2 { return -self.co[0] / self.co[1] };
+        let (mut s1, mut s2): (T, T) = (T::SEED, T::SEED + T::ONE);
         let slope: Self = self.dvt();
-        while s1 - s2 > error || s2 - s1 > error {
+        let mut loop_count: usize = 0;
+        while (s1 - s2).mag2() > error {
+            if loop_count > 100 {
+                s1 += T::SEED;
+                s2 += T::SEED + T::ONE;
+                loop_count = 0;
+            }
             s2 = s1;
             s1 -= self.eval(s2) / slope.eval(s2);
+            loop_count += 1;
         }
         s1
     }
@@ -61,13 +68,15 @@ impl<T: Arithmetic> Poly<T> {
             running = running * root + self.co[self.le-subtract-1];
             quotient.push(running);
         }
-        (Self { co: vec_flip(quotient), le: self.le - 1 }, self.co[0])
+        quotient = vec_flip(quotient);
+        let remainder: T = quotient.remove(0);
+        (Self { co: quotient, le: self.le - 1 }, remainder)
     }
     pub fn solve(self, error: T) -> Vec<T> {
         let mut running: Self = self;
         let mut sols: Vec<T> = Vec::new();
         while running.le > 1 {
-            let next_root: T = running.newton(T::ONE, error);
+            let next_root: T = running.newton(error);
             sols.push(next_root);
             running = running.rootdiv(next_root).0;
         }
@@ -79,12 +88,10 @@ fn vec_flip<T: Copy>(original: Vec<T>) -> Vec<T> {
     let mut result: Vec<T> = Vec::new();
     let le: usize = original.len();
     for indx in 0..le {
-        result[indx] = original[le-indx-1];
+        result.push(original[le-indx-1]);
     }
     result
 }
-
-
 
 impl<T: Arithmetic> Neg for Poly<T> {
     type Output = Self;

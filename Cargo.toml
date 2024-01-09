@@ -1,9 +1,9 @@
 [package]
 name = "basemath"
-version = "2.0.0"
+version = "2.0.1"
 edition = "2021"
 license-file = "license.txt"
-description = "personal little math lib from the ground up"
+description = "math, from the ground up"
 repository = "https://github.com/nptnl/basemath"
 readme = "readme.md"
 

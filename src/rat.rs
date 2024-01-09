@@ -2,8 +2,7 @@ use std::ops::{
     Neg, Add, Sub, Mul, Div, Rem,
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
-
-use crate::cc::{Arithmetic, Identity};
+use crate::rules::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Rat<R: Arithmetic> {
@@ -49,7 +48,7 @@ impl<R: Arithmetic> PartialEq for Rat<R> {
 }
 impl<R: Arithmetic> PartialOrd for Rat<R> {
     fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
-        let quantity: R = self.d * rhs.n - self.n * rhs.d;
+        let quantity: R = self.n * rhs.d - self.d * rhs.n;
         quantity.partial_cmp(&R::ZERO)
     }
 }
@@ -57,15 +56,22 @@ impl<R: Arithmetic> Identity for Rat<R> {
     const ZERO: Self = Self { n: R::ZERO, d: R::ONE };
     const ONE: Self = Self { n: R::ONE, d: R::ONE };
 }
+impl<R: Arithmetic> PowersOfTen for Rat<R> {
+    fn order_of(power: isize) -> Self {
+        if power < 0 {
+            Self { n: R::ONE, d: R::order_of(-power) }
+        } else {
+            Self { n: R::order_of(power), d: R::ONE }
+        }
+    }
+}
+impl<R: Arithmetic> Magnitude for Rat<R> {}
 impl<R: Arithmetic> Arithmetic for Rat<R> {}
 impl<R: Arithmetic + std::fmt::Display> std::fmt::Display for Rat<R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "({}/{})", self.n, self.d)
     }
 }
-
-
-
 
 impl<R: Arithmetic> Neg for Rat<R> {
     type Output = Self;

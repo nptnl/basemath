@@ -1,10 +1,13 @@
 pub mod cc;
 pub mod rat;
 pub mod alg;
+pub mod rules;
 
 use crate::cc::*;
-use crate::rat::*;
 use crate::alg::*;
+use crate::rat::*;
+use crate::rules::*;
+
 
 
 #[cfg(test)]
@@ -12,7 +15,14 @@ mod test {
    use super::*;
    #[test]
    fn m() {
-      let mut cum: Poly<f32> = Poly::new(vec![-2.0, 0.0, 1.0]);
-      println!("{:?}", cum.newton(1.0, 0.001));
+      let aarush: Poly<c32> = Poly::new(vec![
+         Comp::nre(-2.0),
+         Comp::ZERO,
+         Comp::nre(1.0),
+      ]);
+      let sols = aarush.solve(Comp::order_of(-4));
+      for each in sols {
+         println!("{}", each);
+      }
    }
 }
