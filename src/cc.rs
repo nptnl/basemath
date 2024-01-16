@@ -22,11 +22,14 @@ impl<R: Arithmetic> Comp<R> {
     pub fn conj(self) -> Self {
         Self { r: self.r, i: -self.i }
     }
-    pub fn inv(self) -> Self {
+}
+
+impl<R: Arithmetic> Inverse for Comp<R> {
+    fn inv(self) -> Self {
         let divisor: R = self.r * self.r + self.i * self.i;
         Self {
             r: self.r / divisor,
-            i: self.i / divisor
+            i: self.i / divisor,
         }
     }
 }
@@ -154,3 +157,11 @@ impl<R: Arithmetic> PartialOrd for Comp<R> {
 }
 
 impl<R: Arithmetic> Arithmetic for Comp<R> {}
+impl<R: Arithmetic + UsefulReals> UsefulReals for Comp<R> {
+    const TWO: Self = Comp { r: R::TWO, i: R::ZERO };
+    const E: Self = Comp { r: R::E, i: R::ZERO };
+    const TAU: Self = Comp { r: R::TAU, i: R::ZERO };
+    const PI: Self = Comp { r: R::PI, i: R::ZERO };
+    const HALFPI: Self = Comp { r: R::HALFPI, i: R::ZERO };
+    const QTRPI: Self = Comp { r: R::QTRPI, i: R::ZERO };
+}

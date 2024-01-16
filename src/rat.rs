@@ -56,6 +56,11 @@ impl<R: Arithmetic> Identity for Rat<R> {
     const ZERO: Self = Self { n: R::ZERO, d: R::ONE };
     const ONE: Self = Self { n: R::ONE, d: R::ONE };
 }
+impl<R: Arithmetic> Inverse for Rat<R> {
+    fn inv(self) -> Self {
+        Self::new(self.d, self.n)
+    }
+}
 impl<R: Arithmetic> PowersOfTen for Rat<R> {
     fn order_of(power: isize) -> Self {
         if power < 0 {

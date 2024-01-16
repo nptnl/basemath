@@ -8,17 +8,54 @@ pub trait Identity: Copy {
     const ONE: Self;
     const SEED: Self = Self::ONE;
 }
+pub trait UsefulReals: Arithmetic {
+    const TWO: Self;
+    const E: Self;
+    const TAU: Self;
+    const PI: Self;
+    const HALFPI: Self;
+    const QTRPI: Self;
+}
+pub trait Inverse {
+    fn inv(self) -> Self;
+}
 pub trait PowersOfTen: Identity {
     fn order_of(power: isize) -> Self;
+}
+pub trait PowersOfE:
+UsefulReals + Inverse + Identity
++ MulAssign + Mul<Output = Self> {
+    fn etothe(power: isize) -> Self {
+        let mut running: Self = Self::ONE;
+        for _ in 0..power { running *= Self::E; }
+        for _ in power..0 { running *= Self::E; }
+        if power < 0 { running.inv() } else { running }
+    }
 }
 pub trait Magnitude: Identity + Mul<Output = Self> {
     fn mag2(self) -> Self { self * self }
 }
 
 
-pub trait Arithmetic: Identity + PowersOfTen + Magnitude + Copy + std::fmt::Debug + Neg<Output = Self> + PartialEq + PartialOrd
-+ Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Rem<Output = Self>
-+ AddAssign + SubAssign + MulAssign + DivAssign + RemAssign {}
+pub trait Arithmetic:
+  Identity 
++ PowersOfTen
++ Magnitude
++ Copy
++ Neg<Output = Self>
++ PartialEq
++ PartialOrd
++ Add<Output = Self>
++ Sub<Output = Self>
++ Mul<Output = Self>
++ Div<Output = Self>
++ Rem<Output = Self>
++ AddAssign
++ SubAssign
++ MulAssign
++ DivAssign
++ RemAssign
+{}
 
 
 impl Identity for u8 {
@@ -213,3 +250,28 @@ impl PowersOfTen for f64 {
         running
     }
 }
+
+impl UsefulReals for f32 {
+    const TWO: Self = 2.0;
+    const E: Self = 2.718281828459045;
+    const TAU: Self = 6.283185307179586;
+    const PI: Self = 3.141592653589793;
+    const HALFPI: Self = 1.5707963267948966;
+    const QTRPI: Self = 0.7853981633974483;
+}
+impl UsefulReals for f64 {
+    const TWO: Self = 2.0;
+    const E: Self = 2.718281828459045;
+    const TAU: Self = 6.283185307179586;
+    const PI: Self = 3.141592653589793;
+    const HALFPI: Self = 1.5707963267948966;
+    const QTRPI: Self = 0.7853981633974483;
+}
+impl Inverse for f32 {
+    fn inv(self) -> Self { 1.0 / self }
+}
+impl Inverse for f64 {
+    fn inv(self) -> Self { 1.0 / self }
+}
+impl PowersOfE for f32 {}
+impl PowersOfE for f64 {}

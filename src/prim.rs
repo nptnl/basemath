@@ -23,3 +23,22 @@ pub fn ln_raw<X: Arithmetic>(inp: X, iterations: usize) -> X {
     }
     total
 }
+
+pub fn exp_real_fix<X: Arithmetic>(real: X) -> (X, isize) {
+    let mut neg: bool = false;
+    let mut extra: isize = 1;
+    let mut out: X = real;
+    if out < X::ZERO { out = -out; neg = true; }
+    while out > X::ONE { extra += 1; out -= X::ONE; }
+    if neg { extra = -extra; }
+    (out, extra)
+}
+pub fn exp_imag_fix<X: Arithmetic + UsefulReals>(imag: X) -> (X, bool) {
+    let mut out: X = imag;
+    let mut real_flip: bool = false;
+    out %= X::TAU;
+    if out > X::PI { out -= X::TAU; }
+    else if out <= -X::PI { out += X::TAU; }
+    if out > X::HALFPI { out = -out - X::PI; real_flip = true; }
+    (out, real_flip)
+}
