@@ -1,6 +1,7 @@
 use crate::rules::*;
+use crate::cc::Comp;
 
-pub fn exp_raw<X: Reals>(inp: X, iterations: usize) -> X {
+fn exp_raw<X: Reals>(inp: X, iterations: usize) -> X {
     let mut total: X = X::ZERO;
     let mut running: X = X::ONE;
     let mut indx: X = X::ONE;
@@ -11,7 +12,7 @@ pub fn exp_raw<X: Reals>(inp: X, iterations: usize) -> X {
     }
     total
 }
-pub fn ln_raw<X: Reals>(inp: X, iterations: usize) -> X {
+fn _ln_raw<X: Reals>(inp: X, iterations: usize) -> X {
     let centered: X = inp - X::ONE;
     let mut total: X = X::ZERO;
     let mut running: X = centered;
@@ -24,16 +25,15 @@ pub fn ln_raw<X: Reals>(inp: X, iterations: usize) -> X {
     total
 }
 
-pub fn exp_real_fix<X: Reals>(real: X) -> (X, isize) {
+fn exp_real_fix<X: Reals>(real: X) -> (X, isize, bool) {
     let mut neg: bool = false;
-    let mut extra: isize = 1;
+    let mut extra: isize = 0;
     let mut out: X = real;
     if out < X::ZERO { out = -out; neg = true; }
     while out > X::ONE { extra += 1; out -= X::ONE; }
-    if neg { extra = -extra; }
-    (out, extra)
+    (out, extra, neg)
 }
-pub fn exp_imag_fix<X: Reals>(imag: X) -> (X, bool) {
+fn exp_imag_fix<X: Reals>(imag: X) -> (X, bool) {
     let mut out: X = imag;
     let mut real_flip: bool = false;
     out %= X::TAU;
@@ -43,6 +43,22 @@ pub fn exp_imag_fix<X: Reals>(imag: X) -> (X, bool) {
     (out, real_flip)
 }
 
-pub fn exp<X: Reals>(inp: X, iterations: usize) -> X {
-    unimplemented!()
+pub trait Exponential: Reals {
+    fn exp(self, iterations: usize) -> Self {
+        let (fixed, extra, neg): (Self, isize, bool) = exp_real_fix(self);
+        let out: Self = exp_raw(fixed, iterations) * Self::etothe(extra);
+        if neg { out.inv() } else { out }
+    }
+}
+impl Exponential for f32 {}
+impl Exponential for f64 {}
+impl<R: Reals> Exponential for Comp<R> {
+    fn exp(self, iterations: usize) -> Self {
+        let (r_fixed, extra, neg): (R, isize, bool) = exp_real_fix(self.r);
+        let (i_fixed, real_flip): (R, bool) = exp_imag_fix(self.i);
+        let mut out: Comp<R> = exp_raw(Comp { r: r_fixed, i: i_fixed }, iterations) * Comp::etothe(extra);
+        if neg { out = out.inv(); out.i = -out.i; }
+        if real_flip { out.r = -out.r; }
+        out
+    }
 }

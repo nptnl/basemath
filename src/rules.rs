@@ -2,14 +2,13 @@ use std::ops::{
     Neg, Add, Sub, Mul, Div, Rem,
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
-use std::fmt;
 
 pub trait Identity: Copy {
     const ZERO: Self;
     const ONE: Self;
     const SEED: Self = Self::ONE;
 }
-pub trait UsefulReals: Arithmetic {
+pub trait UsefulReals: RealArithmetic {
     const TWO: Self;
     const E: Self;
     const TAU: Self;
@@ -38,7 +37,7 @@ pub trait Magnitude: Identity + Mul<Output = Self> {
     fn mag2(self) -> Self { self * self }
 }
 
-pub trait Arithmetic:
+pub trait RealArithmetic:
   Identity
 + Magnitude
 + Copy
@@ -57,7 +56,8 @@ pub trait Arithmetic:
 + RemAssign
 {}
 pub trait Reals: 
-  Arithmetic
+  RealArithmetic
++ Inverse
 + PowersOfTen
 + PowersOfE
 + UsefulReals
@@ -125,13 +125,13 @@ impl Magnitude for isize {}
 impl Magnitude for f32 {}
 impl Magnitude for f64 {}
 
-impl Arithmetic for i8 {}
-impl Arithmetic for i16 {}
-impl Arithmetic for i32 {}
-impl Arithmetic for i64 {}
-impl Arithmetic for isize {}
-impl Arithmetic for f32 {}
-impl Arithmetic for f64 {}
+impl RealArithmetic for i8 {}
+impl RealArithmetic for i16 {}
+impl RealArithmetic for i32 {}
+impl RealArithmetic for i64 {}
+impl RealArithmetic for isize {}
+impl RealArithmetic for f32 {}
+impl RealArithmetic for f64 {}
 
 impl PowersOfTen for u8 {
     fn order_of(power: isize) -> Self {
@@ -280,3 +280,5 @@ impl Inverse for f64 {
 }
 impl PowersOfE for f32 {}
 impl PowersOfE for f64 {}
+impl Reals for f32 {}
+impl Reals for f64 {}
