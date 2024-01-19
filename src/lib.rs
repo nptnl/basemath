@@ -1,12 +1,14 @@
 pub mod rules;
 pub mod cc;
 pub mod alg;
+pub mod rat;
 pub mod prim;
 
 
 use crate::rules::*;
 use crate::cc::*;
 use crate::alg::*;
+use crate::rat::*;
 use crate::prim::*;
 
 

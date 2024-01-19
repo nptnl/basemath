@@ -2,6 +2,7 @@ use std::ops::{
     Neg, Add, Sub, Mul, Div, Rem,
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
+use std::fmt;
 
 pub trait Identity: Copy {
     const ZERO: Self;
@@ -24,7 +25,8 @@ pub trait PowersOfTen: Identity {
 }
 pub trait PowersOfE:
 UsefulReals + Inverse + Identity
-+ MulAssign + Mul<Output = Self> {
++ MulAssign + Mul<Output = Self>
+{
     fn etothe(power: isize) -> Self {
         let mut running: Self = Self::ONE;
         for _ in 0..power { running *= Self::E; }
@@ -36,10 +38,8 @@ pub trait Magnitude: Identity + Mul<Output = Self> {
     fn mag2(self) -> Self { self * self }
 }
 
-
 pub trait Arithmetic:
-  Identity 
-+ PowersOfTen
+  Identity
 + Magnitude
 + Copy
 + Neg<Output = Self>
@@ -56,7 +56,12 @@ pub trait Arithmetic:
 + DivAssign
 + RemAssign
 {}
-
+pub trait Reals: 
+  Arithmetic
++ PowersOfTen
++ PowersOfE
++ UsefulReals
+{}
 
 impl Identity for u8 {
     const ZERO: Self = 0;

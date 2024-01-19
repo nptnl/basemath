@@ -1,6 +1,6 @@
 use crate::rules::*;
 
-pub fn exp_raw<X: Arithmetic>(inp: X, iterations: usize) -> X {
+pub fn exp_raw<X: Reals>(inp: X, iterations: usize) -> X {
     let mut total: X = X::ZERO;
     let mut running: X = X::ONE;
     let mut indx: X = X::ONE;
@@ -11,7 +11,7 @@ pub fn exp_raw<X: Arithmetic>(inp: X, iterations: usize) -> X {
     }
     total
 }
-pub fn ln_raw<X: Arithmetic>(inp: X, iterations: usize) -> X {
+pub fn ln_raw<X: Reals>(inp: X, iterations: usize) -> X {
     let centered: X = inp - X::ONE;
     let mut total: X = X::ZERO;
     let mut running: X = centered;
@@ -24,7 +24,7 @@ pub fn ln_raw<X: Arithmetic>(inp: X, iterations: usize) -> X {
     total
 }
 
-pub fn exp_real_fix<X: Arithmetic>(real: X) -> (X, isize) {
+pub fn exp_real_fix<X: Reals>(real: X) -> (X, isize) {
     let mut neg: bool = false;
     let mut extra: isize = 1;
     let mut out: X = real;
@@ -33,7 +33,7 @@ pub fn exp_real_fix<X: Arithmetic>(real: X) -> (X, isize) {
     if neg { extra = -extra; }
     (out, extra)
 }
-pub fn exp_imag_fix<X: Arithmetic + UsefulReals>(imag: X) -> (X, bool) {
+pub fn exp_imag_fix<X: Reals>(imag: X) -> (X, bool) {
     let mut out: X = imag;
     let mut real_flip: bool = false;
     out %= X::TAU;
@@ -41,4 +41,8 @@ pub fn exp_imag_fix<X: Arithmetic + UsefulReals>(imag: X) -> (X, bool) {
     else if out <= -X::PI { out += X::TAU; }
     if out > X::HALFPI { out = -out - X::PI; real_flip = true; }
     (out, real_flip)
+}
+
+pub fn exp<X: Reals>(inp: X, iterations: usize) -> X {
+    unimplemented!()
 }

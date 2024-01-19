@@ -3,6 +3,7 @@ use std::ops::{
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
 use crate::rules::*;
+use std::fmt;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Comp<R: Arithmetic> {
@@ -21,42 +22,6 @@ impl<R: Arithmetic> Comp<R> {
     }
     pub fn conj(self) -> Self {
         Self { r: self.r, i: -self.i }
-    }
-}
-
-impl<R: Arithmetic> Inverse for Comp<R> {
-    fn inv(self) -> Self {
-        let divisor: R = self.r * self.r + self.i * self.i;
-        Self {
-            r: self.r / divisor,
-            i: self.i / divisor,
-        }
-    }
-}
-
-impl<R> std::fmt::Display for Comp<R>
-where R: Arithmetic + std::fmt::Display {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.i < R::ZERO {
-            write!(f, "{}-{}i", self.r, -self.i)
-        } else {
-            write!(f, "{}+{}i", self.r, self.i)
-        }
-    }
-}
-impl<R: Arithmetic> Identity for Comp<R> {
-    const ZERO: Self = Self { r: R::ZERO, i: R::ZERO, };
-    const ONE: Self = Self { r: R::ONE, i: R::ZERO };
-    const SEED: Self = Self { r: R::ONE, i: R::ONE };
-}
-impl<R: Arithmetic> PowersOfTen for Comp<R> {
-    fn order_of(power: isize) -> Self {
-        Self { r: R::order_of(power), i: R::ZERO }
-    }
-}
-impl<R: Arithmetic> Magnitude for Comp<R> {
-    fn mag2(self) -> Self {
-        Self::nre(self.r * self.r + self.i * self.i)
     }
 }
 
@@ -156,7 +121,44 @@ impl<R: Arithmetic> PartialOrd for Comp<R> {
     }
 }
 
+impl<R: Arithmetic + fmt::Display> fmt::Display for Comp<R> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.i < R::ZERO {
+            write!(f, "{}-{}i", self.r, -self.i)
+        } else {
+            write!(f, "{}+{}i", self.r, self.i)
+        }
+    }
+}
+impl<R: Arithmetic> Identity for Comp<R> {
+    const ZERO: Self = Self { r: R::ZERO, i: R::ZERO };
+    const ONE: Self = Self { r: R::ONE, i: R::ZERO };
+} 
 impl<R: Arithmetic> Arithmetic for Comp<R> {}
+impl<R: Arithmetic> Inverse for Comp<R> {
+    fn inv(self) -> Self {
+        let divisor: R = self.r * self.r + self.i * self.i;
+        Self {
+            r: self.r / divisor,
+            i: self.i / divisor,
+        }
+    }
+}
+impl<R: Arithmetic + PowersOfTen> PowersOfTen for Comp<R> {
+    fn order_of(power: isize) -> Self {
+        Self { r: R::order_of(power), i: R::ZERO }
+    }
+}
+impl<R: Arithmetic + PowersOfE> PowersOfE for Comp<R> {
+    fn etothe(power: isize) -> Self {
+        Self { r: R::etothe(power), i: R::ZERO }
+    }
+}
+impl<R: Arithmetic> Magnitude for Comp<R> {
+    fn mag2(self) -> Self {
+        Self { r: self.r * self.r + self.i * self.i, i: R::ZERO }
+    }
+}
 impl<R: Arithmetic + UsefulReals> UsefulReals for Comp<R> {
     const TWO: Self = Comp { r: R::TWO, i: R::ZERO };
     const E: Self = Comp { r: R::E, i: R::ZERO };
@@ -165,3 +167,4 @@ impl<R: Arithmetic + UsefulReals> UsefulReals for Comp<R> {
     const HALFPI: Self = Comp { r: R::HALFPI, i: R::ZERO };
     const QTRPI: Self = Comp { r: R::QTRPI, i: R::ZERO };
 }
+impl<R: Reals> Reals for Comp<R> {}

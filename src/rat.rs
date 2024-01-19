@@ -3,6 +3,7 @@ use std::ops::{
     AddAssign, SubAssign, MulAssign, DivAssign, RemAssign};
 use std::cmp::{PartialEq, PartialOrd};
 use crate::rules::*;
+use std::fmt;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Rat<R: Arithmetic> {
@@ -61,7 +62,7 @@ impl<R: Arithmetic> Inverse for Rat<R> {
         Self::new(self.d, self.n)
     }
 }
-impl<R: Arithmetic> PowersOfTen for Rat<R> {
+impl<R: Arithmetic + PowersOfTen> PowersOfTen for Rat<R> {
     fn order_of(power: isize) -> Self {
         if power < 0 {
             Self { n: R::ONE, d: R::order_of(-power) }
@@ -72,8 +73,8 @@ impl<R: Arithmetic> PowersOfTen for Rat<R> {
 }
 impl<R: Arithmetic> Magnitude for Rat<R> {}
 impl<R: Arithmetic> Arithmetic for Rat<R> {}
-impl<R: Arithmetic + std::fmt::Display> std::fmt::Display for Rat<R> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl<R: Arithmetic + fmt::Display> fmt::Display for Rat<R> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "({}/{})", self.n, self.d)
     }
 }
