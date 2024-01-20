@@ -70,8 +70,8 @@ impl<R: RealArithmetic> Div for Comp<R> {
     fn div(self, rhs: Self) -> Self {
         let divisor: R = rhs.r * rhs.r + rhs.i * rhs.i;
         Self {
-            r: (self.r * rhs.r - self.i * rhs.i) / divisor,
-            i: (self.r * rhs.i + self.i * rhs.r) / divisor,
+            r: (self.r * rhs.r + self.i * rhs.i) / divisor,
+            i: (self.i * rhs.r - self.r * rhs.i) / divisor,
         }
     }
 }
@@ -131,6 +131,7 @@ impl<R: RealArithmetic + fmt::Display> fmt::Display for Comp<R> {
 impl<R: RealArithmetic> Identity for Comp<R> {
     const ZERO: Self = Self { r: R::ZERO, i: R::ZERO };
     const ONE: Self = Self { r: R::ONE, i: R::ZERO };
+    const SEED: Self = Self { r: R::ONE, i: R::ONE };
 } 
 impl<R: RealArithmetic> RealArithmetic for Comp<R> {}
 impl<R: RealArithmetic> Inverse for Comp<R> {

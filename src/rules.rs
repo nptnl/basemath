@@ -36,12 +36,15 @@ UsefulReals + Inverse + Identity
 pub trait MagSquare: Identity + Mul<Output = Self> {
     fn mag2(self) -> Self { self * self }
 }
-pub trait Magnitude: RealArithmetic + MagSquare + UsefulReals {
+pub trait Magnitude: std::fmt::Debug + RealArithmetic + MagSquare + UsefulReals {
     fn rrt(self, error: Self) -> Self {
         let (mut t1, mut t2): (Self, Self) = (Self::SEED, Self::SEED + Self::ONE);
+        let mut counter: usize = 0;
         while (t2 - t1).mag2() > error {
+            if counter > 20 { break }; counter += 1;
             t1 = t2;
             t2 -= (t2*t2 - self) / (Self::TWO * t2);
+            println!("{:?}", t2);
         }
         t2
     }

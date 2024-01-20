@@ -20,7 +20,7 @@ mod test {
    use super::*;
    #[test]
    fn mogus() {
-      let inp: c64 = Comp::nim(1.0);
-      println!("ln(i) = {}", inp.lnn(9));
+      let inp: c64 = Comp::nim(-1.0);
+      println!("ln(-i) = {}", inp.lnn(9));
    }
 }
