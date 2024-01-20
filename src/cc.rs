@@ -166,5 +166,4 @@ impl<R: RealArithmetic> MagSquare for Comp<R> {
     }
 }
 impl<R: Reals> Magnitude for Comp<R> {}
-
 impl<R: Reals> Reals for Comp<R> {}
