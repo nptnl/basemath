@@ -33,13 +33,24 @@ UsefulReals + Inverse + Identity
         if power < 0 { running.inv() } else { running }
     }
 }
-pub trait Magnitude: Identity + Mul<Output = Self> {
+pub trait MagSquare: Identity + Mul<Output = Self> {
     fn mag2(self) -> Self { self * self }
+}
+pub trait Magnitude: RealArithmetic + MagSquare + UsefulReals {
+    fn rrt(self, error: Self) -> Self {
+        let (mut t1, mut t2): (Self, Self) = (Self::SEED, Self::SEED + Self::ONE);
+        while (t2 - t1).mag2() > error {
+            t1 = t2;
+            t2 -= (t2*t2 - self) / (Self::TWO * t2);
+        }
+        t2
+    }
+    fn mag1(self, error: Self) -> Self { self.mag2().rrt(error) }
 }
 
 pub trait RealArithmetic:
   Identity
-+ Magnitude
++ MagSquare
 + Copy
 + Neg<Output = Self>
 + PartialEq
@@ -58,6 +69,7 @@ pub trait RealArithmetic:
 pub trait Reals: 
   RealArithmetic
 + Inverse
++ Magnitude
 + PowersOfTen
 + PowersOfE
 + UsefulReals
@@ -112,18 +124,13 @@ impl Identity for f64 {
     const ONE: Self = 1.0;
 }
 
-impl Magnitude for u8 {}
-impl Magnitude for u16 {}
-impl Magnitude for u32 {}
-impl Magnitude for u64 {}
-impl Magnitude for usize {}
-impl Magnitude for i8 {}
-impl Magnitude for i16 {}
-impl Magnitude for i32 {}
-impl Magnitude for i64 {}
-impl Magnitude for isize {}
-impl Magnitude for f32 {}
-impl Magnitude for f64 {}
+impl MagSquare for i8 {}
+impl MagSquare for i16 {}
+impl MagSquare for i32 {}
+impl MagSquare for i64 {}
+impl MagSquare for isize {}
+impl MagSquare for f32 {}
+impl MagSquare for f64 {}
 
 impl RealArithmetic for i8 {}
 impl RealArithmetic for i16 {}
@@ -280,5 +287,7 @@ impl Inverse for f64 {
 }
 impl PowersOfE for f32 {}
 impl PowersOfE for f64 {}
+impl Magnitude for f32 {}
+impl Magnitude for f64 {}
 impl Reals for f32 {}
 impl Reals for f64 {}

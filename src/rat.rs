@@ -71,7 +71,7 @@ impl<R: RealArithmetic + PowersOfTen> PowersOfTen for Rat<R> {
         }
     }
 }
-impl<R: RealArithmetic> Magnitude for Rat<R> {}
+impl<R: RealArithmetic> MagSquare for Rat<R> {} 
 impl<R: RealArithmetic> RealArithmetic for Rat<R> {}
 impl<R: RealArithmetic + fmt::Display> fmt::Display for Rat<R> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

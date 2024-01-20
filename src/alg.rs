@@ -3,11 +3,11 @@ use std::ops::{Neg, Add, Sub, Mul};
 use crate::rules::*;
 
 #[derive(Clone, Debug)]
-pub struct Poly<T: RealArithmetic> {
+pub struct Poly<T: Reals> {
     pub co: Vec<T>,
     pub le: usize,
 }
-impl<T: RealArithmetic> Poly<T> {
+impl<T: Reals> Poly<T> {
     pub fn new(co: Vec<T>) -> Self {
         let le: usize = co.len();
         Self { co, le }
@@ -90,7 +90,7 @@ fn vec_flip<T: Copy>(original: Vec<T>) -> Vec<T> {
     result
 }
 
-impl<T: RealArithmetic> Neg for Poly<T> {
+impl<T: Reals> Neg for Poly<T> {
     type Output = Self;
     fn neg(self) -> Self {
         let mut result: Vec<T> = self.co;
@@ -98,7 +98,7 @@ impl<T: RealArithmetic> Neg for Poly<T> {
         Self { co: result, le: self.le }
     }
 }
-impl<T: RealArithmetic> Add for Poly<T> {
+impl<T: Reals> Add for Poly<T> {
     type Output = Self;
     fn add(self, rhs: Self) -> Self {
         let mut result: Vec<T>;
@@ -116,7 +116,7 @@ impl<T: RealArithmetic> Add for Poly<T> {
         Poly::new(result)
     }
 }
-impl<T: RealArithmetic> Sub for Poly<T> {
+impl<T: Reals> Sub for Poly<T> {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self {
         let mut result: Vec<T>;
@@ -134,7 +134,7 @@ impl<T: RealArithmetic> Sub for Poly<T> {
         Poly::new(result)
     }
 }
-impl<T: RealArithmetic> Mul for Poly<T> {
+impl<T: Reals> Mul for Poly<T> {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self {
         let mut product: Vec<T> = Vec::new();

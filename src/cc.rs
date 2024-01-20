@@ -152,11 +152,6 @@ impl<R: RealArithmetic + PowersOfE> PowersOfE for Comp<R> {
         Self { r: R::etothe(power), i: R::ZERO }
     }
 }
-impl<R: RealArithmetic> Magnitude for Comp<R> {
-    fn mag2(self) -> Self {
-        Self { r: self.r * self.r + self.i * self.i, i: R::ZERO }
-    }
-}
 impl<R: RealArithmetic + UsefulReals> UsefulReals for Comp<R> {
     const TWO: Self = Comp { r: R::TWO, i: R::ZERO };
     const E: Self = Comp { r: R::E, i: R::ZERO };
@@ -165,4 +160,11 @@ impl<R: RealArithmetic + UsefulReals> UsefulReals for Comp<R> {
     const HALFPI: Self = Comp { r: R::HALFPI, i: R::ZERO };
     const QTRPI: Self = Comp { r: R::QTRPI, i: R::ZERO };
 }
+impl<R: RealArithmetic> MagSquare for Comp<R> {
+    fn mag2(self) -> Self {
+        Self { r: self.r * self.r + self.i * self.i, i: R::ZERO }
+    }
+}
+impl<R: Reals> Magnitude for Comp<R> {}
+
 impl<R: Reals> Reals for Comp<R> {}
