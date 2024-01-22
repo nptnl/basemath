@@ -128,6 +128,15 @@ impl<R: RealArithmetic + fmt::Display> fmt::Display for Comp<R> {
         }
     }
 }
+impl<R: RealArithmetic + LaTeX> LaTeX for Comp<R> {
+    fn latex(&self) -> String {
+        if self.i < R::ZERO {
+            format!("{}-{}i", self.r, -self.i)
+        } else {
+            format!("{}+{}i", self.r, self.i)
+        }
+    }
+}
 impl<R: RealArithmetic> Identity for Comp<R> {
     const ZERO: Self = Self { r: R::ZERO, i: R::ZERO };
     const ONE: Self = Self { r: R::ONE, i: R::ZERO };

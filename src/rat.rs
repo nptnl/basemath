@@ -78,6 +78,11 @@ impl<R: RealArithmetic + fmt::Display> fmt::Display for Rat<R> {
         write!(f, "({}/{})", self.n, self.d)
     }
 }
+impl<R: RealArithmetic + LaTeX> LaTeX for Rat<R> {
+    fn latex(&self) -> String {
+        format!("\\frac{{{}}}{{{}}}", self.n, self.d)
+    }
+}
 
 impl<R: RealArithmetic> Neg for Rat<R> {
     type Output = Self;

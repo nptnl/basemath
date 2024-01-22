@@ -293,3 +293,21 @@ impl Magnitude for f32 {}
 impl Magnitude for f64 {}
 impl Reals for f32 {}
 impl Reals for f64 {}
+
+pub trait LaTeX: std::fmt::Display {
+    fn latex(&self) -> String { format!("{}", self) }
+}
+
+impl LaTeX for u8 {}
+impl LaTeX for u16 {}
+impl LaTeX for u32 {}
+impl LaTeX for u64 {}
+impl LaTeX for usize {}
+impl LaTeX for i8 {}
+impl LaTeX for i16 {}
+impl LaTeX for i32 {}
+impl LaTeX for i64 {}
+impl LaTeX for isize {}
+
+impl LaTeX for f32 {}
+impl LaTeX for f64 {}
