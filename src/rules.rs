@@ -44,7 +44,6 @@ pub trait Magnitude: std::fmt::Debug + RealArithmetic + MagSquare + UsefulReals 
             if counter > 20 { break }; counter += 1;
             t1 = t2;
             t2 -= (t2*t2 - self) / (Self::TWO * t2);
-            println!("{:?}", t2);
         }
         t2
     }

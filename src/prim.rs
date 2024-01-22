@@ -39,7 +39,8 @@ fn exp_imag_fix<X: Reals>(imag: X) -> (X, bool) {
     out %= X::TAU;
     if out > X::PI { out -= X::TAU; }
     else if out <= -X::PI { out += X::TAU; }
-    if out > X::HALFPI { out = -out - X::PI; real_flip = true; }
+    if out > X::HALFPI { out = X::PI - out; real_flip = true; }
+    else if out < -X::HALFPI { out = -X::PI - out; real_flip = true; }
     (out, real_flip)
 }
 fn ln_mag_fix<X: Reals>(mag: X) -> (X, X, bool) {
@@ -96,5 +97,85 @@ impl<R: Reals> Exponential for Comp<R> {
         let (ang_fix, extra_imag): (Self, R) = ln_angle_fix(unit);
         if invert { ln_raw(ang_fix / mag_fix, iterations) + Comp::new(extra_real, extra_imag) }
         else { ln_raw(ang_fix * mag_fix, iterations) + Comp::new(-extra_real, extra_imag) }
+    }
+}
+
+fn sin_raw<X: Reals>(inp: X, iterations: usize) -> X {
+    let mut total: X = X::ZERO;
+    let mut running: X = inp;
+    let mut indx: X = X::TWO;
+    for _ in 0..iterations {
+        total += running;
+        running *= -inp * inp / indx / (indx + X::ONE);
+        indx += X::TWO;
+    }
+    total
+}
+fn cos_raw<X: Reals>(inp: X, iterations: usize) -> X {
+    let mut total: X = X::ZERO;
+    let mut running: X = X::ONE;
+    let mut indx: X = X::ONE;
+    for _ in 0..iterations {
+        total += running;
+        running *= -inp * inp / indx / (indx + X::ONE);
+        indx += X::TWO;
+    }
+    total
+}
+pub trait Trigonometry: Reals {
+    fn xsin(self, iterations: usize) -> Self {
+        let fixed: Self = exp_imag_fix(self).0;
+        sin_raw(fixed, iterations)
+    }
+    fn xcos(self, iterations: usize) -> Self {
+        let (fixed, neg): (Self, bool) = exp_imag_fix(self);
+        if neg { -cos_raw(fixed, iterations) } else { cos_raw(fixed, iterations) }
+    }
+    fn xcsc(self, iterations: usize) -> Self { self.xsin(iterations).inv() }
+    fn xsec(self, iterations: usize) -> Self { self.xcos(iterations).inv() }
+    fn xtan(self, iterations: usize) -> Self {
+        let (fixed, neg): (Self, bool) = exp_imag_fix(self);
+        if neg { -sin_raw(fixed, iterations) / cos_raw(fixed, iterations) }
+        else { sin_raw(fixed, iterations) / cos_raw(fixed, iterations) }
+    }
+    fn xcot(self, iterations: usize) -> Self {
+        let (fixed, neg): (Self, bool) = exp_imag_fix(self);
+        if neg { -cos_raw(fixed, iterations) / sin_raw(fixed, iterations) }
+        else { cos_raw(fixed, iterations) / sin_raw(fixed, iterations) }
+    }
+}
+impl Trigonometry for f32 {}
+impl Trigonometry for f64 {}
+impl<R: RealArithmetic> Comp<R> {
+    pub fn ccw(self) -> Self {
+        Self { r: -self.i, i: self.r }
+    }
+    pub fn cw(self) -> Self {
+        Self { r: self.i, i: -self.r }
+    }
+}
+impl<R: Reals> Comp<R> {
+    pub fn ixp(self, iterations: usize) -> Self {
+        self.ccw().exp(iterations)
+    }
+}
+impl<R: Reals> Trigonometry for Comp<R> {
+    fn xsin(self, iterations: usize) -> Self {
+        let series: Self = self.ixp(iterations);
+        println!("{:?}", series);
+        println!("{:?}", series.inv());
+        ((series - series.inv()) / Self::TWO).cw()
+    }
+    fn xcos(self, iterations: usize) -> Self {
+        let series: Self = self.ixp(iterations);
+        (series + series.inv()) / Self::TWO
+    }
+    fn xtan(self, iterations: usize) -> Self {
+        let series: Self = self.ixp(iterations);
+        (series - series.inv()) / (series + series.inv()).cw()
+    }
+    fn xcot(self, iterations: usize) -> Self {
+        let series: Self = self.ixp(iterations);
+        ((series + series.inv()) / (series - series.inv())).ccw()
     }
 }

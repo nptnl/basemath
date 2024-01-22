@@ -139,7 +139,7 @@ impl<R: RealArithmetic> Inverse for Comp<R> {
         let divisor: R = self.r * self.r + self.i * self.i;
         Self {
             r: self.r / divisor,
-            i: self.i / divisor,
+            i: -self.i / divisor,
         }
     }
 }
