@@ -93,10 +93,10 @@ impl<R: Reals> Exponential for Comp<R> {
         let unit: Self = self / mag;
         let mag: R = mag.r;
         let (mag_fix, extra_real, invert): (R, R, bool) = ln_mag_fix(mag);
-        let mag_fix = Comp::nre(mag_fix);
+        let mag_fix = Self::nre(mag_fix);
         let (ang_fix, extra_imag): (Self, R) = ln_angle_fix(unit);
-        if invert { ln_raw(ang_fix / mag_fix, iterations) + Comp::new(extra_real, extra_imag) }
-        else { ln_raw(ang_fix * mag_fix, iterations) + Comp::new(-extra_real, extra_imag) }
+        if invert { ln_raw(ang_fix / mag_fix, iterations) + Self::new(extra_real, extra_imag) }
+        else { ln_raw(ang_fix * mag_fix, iterations) + Self::new(-extra_real, extra_imag) }
     }
 }
 
@@ -122,7 +122,7 @@ fn cos_raw<X: Reals>(inp: X, iterations: usize) -> X {
     }
     total
 }
-pub trait Trigonometry: Reals {
+pub trait CircularTrig: Reals + Exponential {
     fn xsin(self, iterations: usize) -> Self {
         let fixed: Self = exp_imag_fix(self).0;
         sin_raw(fixed, iterations)
@@ -144,8 +144,31 @@ pub trait Trigonometry: Reals {
         else { cos_raw(fixed, iterations) / sin_raw(fixed, iterations) }
     }
 }
-impl Trigonometry for f32 {}
-impl Trigonometry for f64 {}
+pub trait HyperbolicTrig: Reals + Exponential {
+    fn xsinh(self, iterations: usize) -> Self {
+        let series: Self = self.exp(iterations);
+        (series - series.inv()) / Self::TWO
+    }
+    fn xcosh(self, iterations: usize) -> Self {
+        let series: Self = self.exp(iterations);
+        (series + series.inv()) / Self::TWO
+    }
+    fn xcsch(self, iterations: usize) -> Self { self.xsinh(iterations).inv() }
+    fn xsech(self, iterations: usize) -> Self { self.xcosh(iterations).inv() }
+    fn xtanh(self, iterations: usize) -> Self {
+        let series: Self = self.exp(iterations);
+        (series - series.inv()) / (series + series.inv())
+    }
+    fn xcoth(self, iterations: usize) -> Self {
+        let series: Self = self.exp(iterations);
+        (series + series.inv()) / (series - series.inv())
+    }
+}
+impl CircularTrig for f32 {}
+impl CircularTrig for f64 {}
+impl HyperbolicTrig for f32 {}
+impl HyperbolicTrig for f64 {}
+
 impl<R: RealArithmetic> Comp<R> {
     pub fn ccw(self) -> Self {
         Self { r: -self.i, i: self.r }
@@ -159,11 +182,9 @@ impl<R: Reals> Comp<R> {
         self.ccw().exp(iterations)
     }
 }
-impl<R: Reals> Trigonometry for Comp<R> {
+impl<R: Reals> CircularTrig for Comp<R> {
     fn xsin(self, iterations: usize) -> Self {
         let series: Self = self.ixp(iterations);
-        println!("{:?}", series);
-        println!("{:?}", series.inv());
         ((series - series.inv()) / Self::TWO).cw()
     }
     fn xcos(self, iterations: usize) -> Self {
@@ -179,3 +200,4 @@ impl<R: Reals> Trigonometry for Comp<R> {
         ((series + series.inv()) / (series - series.inv())).ccw()
     }
 }
+impl<R: Reals> HyperbolicTrig for Comp<R> {}
