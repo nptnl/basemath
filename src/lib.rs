@@ -20,7 +20,6 @@ mod test {
    use super::*;
    #[test]
    fn mogus() {
-      let inp: c64 = -c64::PI * Comp::nre(0.66666667);
-      println!("sin(π/3) = {}\ncos(π/3) = {}", inp.xsin(8), inp.xcos(8));
+      println!("{}", Comp::<f64>::TWO.xacos(9));
    }
 }

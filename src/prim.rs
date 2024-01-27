@@ -70,9 +70,8 @@ pub trait Exponential: Reals {
         if neg { out.inv() } else { out }
     }
     fn lnn(self, iterations: usize) -> Self {
-        let mag: Self =
-        if self < Self::ZERO { -self } else { self };
-        let (mag_fix, extra_real, invert): (Self, Self, bool) = ln_mag_fix(mag);
+        if self < Self::ZERO { return Self::UNDEF; }
+        let (mag_fix, extra_real, invert): (Self, Self, bool) = ln_mag_fix(self);
         if invert { ln_raw(mag_fix.inv(), iterations) + extra_real }
         else { ln_raw(mag_fix, iterations) - extra_real }
     }
@@ -164,10 +163,36 @@ pub trait HyperbolicTrig: Reals + Exponential {
         (series + series.inv()) / (series - series.inv())
     }
 }
+pub trait CircularTrigInv: Reals + Exponential {
+    fn xacos(self, iterations: usize) -> Self {
+        if self > Self::ONE || self < -Self::ONE { return Self::UNDEF; }
+        let unit_circle: Comp<Self> = Comp { r: self, i: (Self::ONE - self * self).rrt(Self::order_of(-4)) };
+        unit_circle.lnn(iterations).i
+    }
+    fn xasin(self, iterations: usize) -> Self {
+        Self::HALFPI + self.xacos(iterations)
+    }
+    fn xacsc(self, iterations: usize) -> Self {
+        Self::HALFPI + self.inv().xacos(iterations)
+    }
+    fn xasec(self, iterations: usize) -> Self {
+        self.inv().xacos(iterations)
+    }
+    fn xatan(self, iterations: usize) -> Self {
+        let cosine: Self = (self * self + Self::ONE).inv().rrt(Self::order_of(-4));
+        cosine.xacos(iterations)
+    }
+    fn xacot(self, iterations: usize) -> Self {
+        self.inv().xatan(iterations)
+    }
+}
+
 impl CircularTrig for f32 {}
 impl CircularTrig for f64 {}
 impl HyperbolicTrig for f32 {}
 impl HyperbolicTrig for f64 {}
+impl CircularTrigInv for f32 {}
+impl CircularTrigInv for f64 {}
 
 impl<R: RealArithmetic> Comp<R> {
     pub fn ccw(self) -> Self {
@@ -201,3 +226,9 @@ impl<R: Reals> CircularTrig for Comp<R> {
     }
 }
 impl<R: Reals> HyperbolicTrig for Comp<R> {}
+impl<R: Reals> CircularTrigInv for Comp<R> {
+    fn xacos(self, iterations: usize) -> Self {
+        let unit_circle: Self = self + (self * self - Self::ONE).rrt(Self::order_of(-4));
+        unit_circle.lnn(iterations).cw()
+    }
+}

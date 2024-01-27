@@ -75,7 +75,10 @@ pub trait Reals:
 + PowersOfTen
 + PowersOfE
 + UsefulReals
-{}
+{
+    const UNDEF: Self;
+    const INFINITE: Self;
+}
 
 impl Identity for u8 {
     const ZERO: Self = 0;
@@ -291,8 +294,15 @@ impl PowersOfE for f32 {}
 impl PowersOfE for f64 {}
 impl Magnitude for f32 {}
 impl Magnitude for f64 {}
-impl Reals for f32 {}
-impl Reals for f64 {}
+
+impl Reals for f32 {
+    const UNDEF: Self = Self::NAN;
+    const INFINITE: Self = Self::INFINITY;
+}
+impl Reals for f64 {
+    const UNDEF: Self = Self::NAN;
+    const INFINITE: Self = Self::INFINITY;
+}
 
 pub trait LaTeX: std::fmt::Display {
     fn latex(&self) -> String { format!("{}", self) }

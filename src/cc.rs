@@ -176,4 +176,7 @@ impl<R: RealArithmetic> MagSquare for Comp<R> {
     }
 }
 impl<R: Reals> Magnitude for Comp<R> {}
-impl<R: Reals> Reals for Comp<R> {}
+impl<R: Reals> Reals for Comp<R> {
+    const UNDEF: Self = Self { r: R::UNDEF, i: R::UNDEF };
+    const INFINITE: Self = Self { r: R::INFINITE, i: R::INFINITE };
+}
