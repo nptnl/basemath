@@ -20,8 +20,11 @@ mod test {
    use super::*;
    #[test]
    fn mogus() {
-      let result: Comp<f64> = Comp::TWO.xacos(9);
-      println!("{}", result);
-      println!("{}", result.xcos(9));
+      let inp: f64 = f64::TWO;
+      println!("x = {}", inp);
+      let out: f64 = inp.xsin(9);
+      println!("sin(x) = {}", out);
+      let inp: f64 = out.xasin(9);
+      println!("asin( sin(x) ) = {}", inp);
    }
 }

@@ -163,28 +163,39 @@ pub trait HyperbolicTrig: Reals + Exponential {
         (series + series.inv()) / (series - series.inv())
     }
 }
+
+static INV_TRIG_ERR_PWR: isize = -4;
+#[inline(always)]
+fn root_plus<X: Reals>(inp: X) -> X {
+    (X::ONE + inp * inp).rrt(X::order_of(INV_TRIG_ERR_PWR))
+}
+#[inline(always)]
+fn root_minus<X: Reals>(inp: X) -> X {
+    (X::ONE - inp * inp).rrt(X::order_of(INV_TRIG_ERR_PWR))
+}
+
 pub trait CircularTrigInv: Reals + Exponential {
     fn xacos(self, iterations: usize) -> Self {
         if self > Self::ONE || self < -Self::ONE { return Self::UNDEF; }
-        let unit_circle: Comp<Self> = Comp { r: self, i: (Self::ONE - self * self).rrt(Self::order_of(-4)) };
+        let unit_circle: Comp<Self> = Comp { r: self, i: root_minus(self) };
         unit_circle.lnn(iterations).i
     }
-    fn xasin(self, iterations: usize) -> Self {
-        Self::HALFPI + self.xacos(iterations)
+    fn xasin(self, iterations: usize) -> Self { Self::HALFPI + self.xacos(iterations) }
+    fn xacsc(self, iterations: usize) -> Self { Self::HALFPI + self.inv().xacos(iterations) }
+    fn xasec(self, iterations: usize) -> Self { self.inv().xacos(iterations) }
+    fn xatan(self, iterations: usize) -> Self { root_plus(self).inv().xacos(iterations) }
+    fn xacot(self, iterations: usize) -> Self { self.inv().xatan(iterations) }
+}
+pub trait HyperbolicTrigInv: Reals + Exponential {
+    fn xacosh(self, iterations: usize) -> Self {
+        if self < Self::ONE { return Self::UNDEF; }
+        (self + root_plus(self)).lnn(iterations)
     }
-    fn xacsc(self, iterations: usize) -> Self {
-        Self::HALFPI + self.inv().xacos(iterations)
-    }
-    fn xasec(self, iterations: usize) -> Self {
-        self.inv().xacos(iterations)
-    }
-    fn xatan(self, iterations: usize) -> Self {
-        let cosine: Self = (self * self + Self::ONE).inv().rrt(Self::order_of(-4));
-        cosine.xacos(iterations)
-    }
-    fn xacot(self, iterations: usize) -> Self {
-        self.inv().xatan(iterations)
-    }
+    fn xasinh(self, iterations: usize) -> Self { (self + root_plus(self)).lnn(iterations) }
+    fn xacsch(self, iterations: usize) -> Self { self.inv().xasinh(iterations) }
+    fn xasech(self, iterations: usize) -> Self { self.inv().xasinh(iterations) }
+    fn xatanh(self, iterations: usize) -> Self { root_minus(self).inv().xacosh(iterations) }
+    fn xacoth(self, iterations: usize) -> Self { self.inv().xatanh(iterations) }
 }
 
 impl CircularTrig for f32 {}
@@ -193,6 +204,8 @@ impl HyperbolicTrig for f32 {}
 impl HyperbolicTrig for f64 {}
 impl CircularTrigInv for f32 {}
 impl CircularTrigInv for f64 {}
+impl HyperbolicTrigInv for f32 {}
+impl HyperbolicTrigInv for f64 {}
 
 impl<R: RealArithmetic> Comp<R> {
     pub fn ccw(self) -> Self {
@@ -232,3 +245,21 @@ impl<R: Reals> CircularTrigInv for Comp<R> {
         unit_circle.lnn(iterations).cw()
     }
 }
+impl<R: Reals> HyperbolicTrigInv for Comp<R> {
+    fn xacosh(self, iterations: usize) -> Self {
+        (self + root_plus(self)).lnn(iterations)
+    }
+}
+
+pub trait Trigonometry:
+  Reals
+  + Exponential
+  + CircularTrig
+  + CircularTrigInv
+  + HyperbolicTrig
+  + HyperbolicTrigInv
+{}
+
+impl Trigonometry for f32 {}
+impl Trigonometry for f64 {}
+impl<R: Reals> Trigonometry for Comp<R> {}
