@@ -1,6 +1,6 @@
 [package]
 name = "basemath"
-version = "2.3.0"
+version = "2.4.0"
 edition = "2021"
 license-file = "license.txt"
 description = "math, from the ground up"

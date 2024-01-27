@@ -20,6 +20,8 @@ mod test {
    use super::*;
    #[test]
    fn mogus() {
-      println!("{}", Comp::<f64>::TWO.xacos(9));
+      let result: Comp<f64> = Comp::TWO.xacos(9);
+      println!("{}", result);
+      println!("{}", result.xcos(9));
    }
 }
