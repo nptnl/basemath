@@ -75,6 +75,9 @@ pub trait Exponential: Reals {
         if invert { ln_raw(mag_fix.inv(), iterations) + extra_real }
         else { ln_raw(mag_fix, iterations) - extra_real }
     }
+    fn power(&self, rhs: Self, iterations: usize) -> Self {
+        (self.lnn(iterations) * rhs).exp(iterations)
+    }
 }
 impl Exponential for f32 {}
 impl Exponential for f64 {}
