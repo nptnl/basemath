@@ -3,28 +3,16 @@ pub mod cc;
 pub mod alg;
 pub mod rat;
 pub mod prim;
-
+pub mod lin;
 #[allow(unused_imports)]
-use crate::rules::*;
-#[allow(unused_imports)]
-use crate::cc::*;
-#[allow(unused_imports)]
-use crate::alg::*;
-#[allow(unused_imports)]
-use crate::rat::*;
-#[allow(unused_imports)]
-use crate::prim::*;
+use crate::{rules::*, cc::*, alg::*, rat::*, prim::*, lin::*};
 
 #[cfg(test)]
 mod test {
    use super::*;
    #[test]
    fn mogus() {
-      let inp: f64 = f64::TWO;
-      println!("x = {}", inp);
-      let out: f64 = inp.xsin(9);
-      println!("sin(x) = {}", out);
-      let inp: f64 = out.xasin(9);
-      println!("asin( sin(x) ) = {}", inp);
+      let third: Rat<i32> = Rat::new(2, 6);
+      println!("{}", third.latex());
    }
 }

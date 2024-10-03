@@ -131,9 +131,9 @@ impl<R: RealArithmetic + fmt::Display> fmt::Display for Comp<R> {
 impl<R: RealArithmetic + LaTeX> LaTeX for Comp<R> {
     fn latex(&self) -> String {
         if self.i < R::ZERO {
-            format!("{}-{}i", self.r, -self.i)
+            format!("{}-i{}", self.r, -self.i)
         } else {
-            format!("{}+{}i", self.r, self.i)
+            format!("{}+i{}", self.r, self.i)
         }
     }
 }
